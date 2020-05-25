@@ -6,27 +6,27 @@ from pysnmp.hlapi import *
 
 def getparameter (server, parameter, oid):
   
-   print ("ips are:", [ipobj.ip for ipobj in server.serveripaddress_set.all()] )
    for linkip in server.serveripaddress_set.all():
 
-    print("getparamter try ip %s", linkip.ip)
+    #print("getparamter try ip %s", linkip.ip)
     if linkip.pingstatus == "Passed":
         print ("SNMPGet(%s , %s , %s, %s)" % (parameter, linkip.ip, oid, server.snmp_community))
         try : stat = SNMPGet(parameter, linkip.ip, oid, server.snmp_community)
         except Exception as err: print ("Error - %s" % err)
         else:
           if "timeout" in str(stat):
-            return ("Error: " + str(stat) )
+            return_val =  ("Error: " + str(stat) )
           
           elif "No Such Instance currently exists" in str(stat):
-            return  ("Error: " + stat[0].split(' = ')[1])
+            return_val =   ("Error: " + stat[0].split(' = ')[1])
 
 
           elif len(stat) is not 0:
            return  stat[0].split(' = ')[1]
          
-          else : return ("Error: Unknown" + str(stat))
-
+          else : return_val =  ("Error: Unknown" + str(stat))
+   
+   return return_val
 
 
 
