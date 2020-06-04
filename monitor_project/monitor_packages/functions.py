@@ -1,5 +1,6 @@
 from os import system
 from monitor_app.models import *
+import re
 
 
 def ping(server):
@@ -62,7 +63,35 @@ def intialise_server_list(server_list):
 
 			db_server.setuplinks(server)
 
-			for link in db_server.serverlink_set.all():
-				print ("Link is ", link)
+			# for link in db_server.serverlink_set.all():
+			# 	print ("Link is ", link)
 				
+
+
+
+### Note that snmp walk sends back duplicated of the links with different oids...
+## eg two Knotelecom_01-20190226's come back and two Saramad_02-20191021.
+
+def testalllinks (server, testname):
+
+    for objip in server.serveripaddress_set.all():
+
+     walklist = [ x for x in SNMPWalk(testname, objip.ip, server.snmp_community) if testname in x ]
+     if (len(walklist) == 1) and "No SNMP response received" in walklist : print ('No response from ip %s' % objip.ip)
+
+     else:
+         for walkelement in walklist:
+        #  print (walklist)
+   #       print (pattern.match(walkelement).group(1,2))
+   #       return [ pattern.match(walkelement).group(1,2) for walkelement in walklist]
+           pattern = re.compile(r'.*' + testname + '\.([0-9]+) = (.+$)', re.UNICODE)
+           oid, status  = pattern.match(walkelement).group(1,2)
+           #print(pattern.match(walkelement).group(1,2))
+           #print(oid, status)
+           linkobj = ServerLink.objects.filter(server = server).filter(oid = oid).first()
+           print(linkobj, oid ,status)
+     return
+
+
+
 
