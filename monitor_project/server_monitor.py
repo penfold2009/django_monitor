@@ -15,6 +15,7 @@ from datetime import timedelta
 import re
 from monitor_packages.snmp_functions import *
 from monitor_packages.functions import *
+from django.contrib.auth.models import User                                                                      
 
 
 # managed1 = Server.objects.get(name="Managed_server1")
@@ -70,15 +71,14 @@ if __name__ == '__main__':
 
 
 
- intialise_server_list(server_list)
- managed1 = Server.objects.get(name = "ManagedServer1")
- mangedip1 = managed1.serveripaddress_set.first().ip
+	intialise_server_list(server_list)
+	managed1 = Server.objects.get(name = "ManagedServer1")
+	mangedip1 = managed1.serveripaddress_set.first().ip
+	SNMPWalk('vibePeerName',mangedip1,managed1.snmp_community)
+	SNMPWalk('vibeTunnelStatus',mangedip1,managed1.snmp_community)
+	snmplinks = [(c,x.split('=')[1]) for x in  enumerate(SNMPWalk('vibePeerName',mangedip1,managed1.snmp_community),1) if 'vibePeerName' in x]
 
- SNMPWalk('vibePeerName',mangedip1,managed1.snmp_community)
- SNMPWalk('vibeTunnelStatus',mangedip1,managed1.snmp_community)
-
-snmplinks = [(c,x.split('=')[1]) for x in  enumerate(SNMPWalk('vibePeerName',mangedip1,managed1.snmp_community),1) if 'vibePeerName' in x]
-
+	colin = User.object().first()
 	# aritari = Company(name="Aritari")
 	# aritari.save()
 

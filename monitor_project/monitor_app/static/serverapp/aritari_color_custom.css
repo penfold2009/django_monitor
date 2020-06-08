@@ -1,0 +1,122 @@
+ /* color theme: custom */
+ /* rename this file color_custom.css and place in /etc/branding */
+
+html, body {font-size: 1.0em;}
+
+/* Header text and background */
+#header, #header #short-status {
+	color: Black;
+	/*background-color: #e8ca9e;*/
+	background-color: #b1caed;
+
+}
+
+ /*Routing table mods*/
+#routingsearch { background-color: #e5e7e9; padding-right: 5px; width:100%;}
+#routingsearch2 { padding-right: 5px; width:100%;}
+
+#routingsearchcell { padding-right: 5px; width:440px;}
+
+
+
+
+/* Menu colours */
+#submenu,
+#mainmenu,
+#save .page-save, #footer { background-color: #b1caed; }
+
+
+/* selected items & mouse hover colours */
+#mainmenu a:hover,
+#submenu a:hover,
+#mainmenu .selected a,
+#submenu .selected a,
+#save a:hover { background-color: #b1caed; color:White; }
+#mainmenu, #submenu { background-color: #b1caed; }
+
+#mainmenu, #submenu { color Black; }
+
+#mainmenu li a, #submenu li a{ color: Black; }
+
+/*li a {
+    color: green;
+}
+*/
+
+/* Background colours for "Apply Changes" area */
+#save .apply { background-color: #b1caed; }
+
+#save a {
+    color: Black;
+}
+
+/* Background colours for h3 normally identifiable as subheadings on a coloured background banner */
+#content h3 { background-color: #b1caed; }
+/*#content h3 { background-color: #e8ca9e; }*/
+
+#footer { background-color: #b1caed; color:Black; }
+
+/* Progress bar colours if required */
+.progressbar-filled {
+	color: White;
+	background-color: #2b1b9f;
+}
+
+.progressbar-unfilled {
+	color: Black;
+	background-color: Black;
+}
+
+
+/* Link Text colours (optional) */
+a {
+	color: Black; 
+}
+
+a:hover {
+	color: Red; 
+}
+
+.nav .navbar-nav {
+    float:none;
+    margin:0 auto;
+    display: block;
+
+}
+
+.navbar-nav > li {
+    display: inline-block;
+    float:none;
+}
+
+
+/*https://techwithtim.net/tutorials/django/adding-a-sidebar/*/
+
+.sidenav {
+	height:100%;
+	width:120px;
+	position: fixed;
+	z-index:1;
+	top:0;
+	left:0;
+	background-color:#111;
+	overflow-x: :hidden;
+	padding-top:20px;
+}
+
+.sidenav a {
+	padding:6px 8px 6px 16px;
+	text-decoration: none;
+	font-size:25px;
+	color: #818181;
+	display:block;
+}
+
+.sidenav a:hover{
+	color:#f1f1f1;
+}	
+
+.main{
+	margin-left:120px;
+	padding: 0px 10px;
+}

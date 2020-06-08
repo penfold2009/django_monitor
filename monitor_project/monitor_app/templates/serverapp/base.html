@@ -1,0 +1,111 @@
+{% load static %}  <!-- https://docs.djangoproject.com/en/3.0/ref/templates/builtins/#std:templatetag-static -->
+
+<html>
+    <head>
+        <meta charset="utf-8"> 
+
+        <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- for mobile phones -->
+
+        
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script> 
+        <link href="//fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+         <!-- <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" type="text/css" crossorigin="anonymous"> -->
+         <link href="https://fonts.googleapis.com/css2?family=Fauna+One&display=swap" rel="stylesheet"> 
+        <link rel="stylesheet" href="{% static 'serverapp/style.css' %}">
+        <title>Aritari server listing.</title>
+    </head>
+    
+
+    <body>
+    
+          <div class="sidenav">
+            <a href="#">About</a>
+            <a href="#">Services</a>
+            <a href="#">Clients</a>
+            <a href="#">Contact</a>
+          </div> 
+
+          <div class="main">
+
+        <nav class="navbar  bg-info">
+          <div class="container-fluid">
+           
+            <div class="navbar-header">
+              <a href="/"><h2>Aritari Server list</h2></a>
+            </div>
+           
+            <ul class="nav navbar-nav">
+              <li><a href="#">Page 1</a></li>
+              <li><a href="#">Page 2</a></li>
+              <li><a href="#">Page 3</a></li>
+            </ul>
+            
+            <ul class="nav navbar-nav navbar-right">
+              {% if user.is_authenticated %}
+                 <li><a href="{% url 'logout'%}?next={{request.path}}"><span class="glyphicon glyphicon-log-out"></span>  {{ user.get_username|capfirst }} Logout</a></li>   
+              {% else %}
+                 <li><a href="{% url 'login'%}?next={{request.path}}"><span class="glyphicon glyphicon-log-in"></span>  {{ user.get_username|capfirst }} Login</a></li>   
+              {% endif %} 
+            </ul>
+
+
+
+
+
+           </div class="container-fluid">
+           </nav class="navbar  bg-info">
+
+          <!-- Side bar stuff -->
+           {% block sidebar %}
+           <!-- empty at the moment -->
+           {% endblock sidebar %} 
+        <!-- <div class="container-fluid"> -->
+       <div class="content container">   
+
+
+
+
+
+           {% block login_content %}
+
+            <!-- For the login pages -->
+           {% endblock login_content %}
+
+           <div class="row">     
+
+             <div class="col-md-3">
+                <ul>
+
+                 <div class="panel panel-default">
+                   <div class="panel-heading">Companies</div>
+                      <div class="panel-body">
+                        {% for company in  companies %}
+                          <!-- <li><a href="/company_server/{{ company }}/">{{ company }}</a></li> -->
+                          <li><a href="{% url 'serverapp:server'  company %}">{{ company }}</a></li>
+
+                       {% endfor %}
+                      </div class="panel-body">
+
+
+                </ul>
+
+             </div class="col-md-3">
+
+
+           {% block server_list %}
+           {% endblock server_list %}
+
+           {% block link_content %}
+           {% endblock link_content %}
+
+           </div class="row">
+        </div class="content container">
+    </div class="container-fluid">
+
+</div class="main">
+
+    </body>
+</html>
