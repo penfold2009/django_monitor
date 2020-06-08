@@ -19,7 +19,7 @@ def ping(server):
 
 
 # def intialise_server_list(server_list, serverfile):
-
+# 
 #   try: return [ Server(ipaddresslist = server['ipaddress'],
 #                       community = server['community'],
 #                            name = server['name'],
