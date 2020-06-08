@@ -22,10 +22,18 @@
     <body>
     
           <div class="sidenav">
-            <a href="#">About</a>
+            <img src="{% static 'serverapp/aritari-logo.png' %}" alt="Powered By Voipex" height="60px">
+            <!-- <img src="static/serverapp/aritari-logo.png" alt="Powered By Voipex" height="88px"> -->
+            <h3 class = "sidenav-title" >Servers</h3>
+
+
+            {% for company in  companies %}
+              <a href="{% url 'serverapp:server'  company %}" style="font-size:20px">{{ company }}</a>
+            {% endfor %}
+<!--             <a href="#">About</a>
             <a href="#">Services</a>
             <a href="#">Clients</a>
-            <a href="#">Contact</a>
+            <a href="#">Contact</a> -->
           </div> 
 
           <div class="main">

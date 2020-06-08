@@ -99,7 +99,7 @@ a:hover {
 	z-index:1;
 	top:0;
 	left:0;
-	background-color:#111;
+	background-color:#ffff;
 	overflow-x: :hidden;
 	padding-top:20px;
 }
@@ -113,10 +113,15 @@ a:hover {
 }
 
 .sidenav a:hover{
-	color:#f1f1f1;
+	color:#4144f1;
 }	
 
 .main{
 	margin-left:120px;
 	padding: 0px 10px;
+}
+
+
+.sidenav-title{
+	padding: 0px 10px;	
 }
