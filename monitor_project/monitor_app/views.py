@@ -83,7 +83,7 @@ def links(request, server_name):
     company_name = server_obj.company.name
     company_obj = get_object_or_404(Company, name=company_name)
 
-    context = {'links': server_obj.link_set.all(), 
+    context = {'links': server_obj.serverlink_set.all(), 
                'company_name': company_name,
                'companies': Company.objects.all(),
                'company_obj' : company_obj,

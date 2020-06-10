@@ -43,6 +43,13 @@ html, body {font-size: 1.0em;}
 }
 */
 
+li {
+   
+    margin-left:10px
+}
+
+
+
 /* Background colours for "Apply Changes" area */
 #save .apply { background-color: #b1caed; }
 

@@ -18,18 +18,19 @@
         <title>Aritari server listing.</title>
     </head>
     
-
     <body>
     
           <div class="sidenav">
             <img src="{% static 'serverapp/aritari-logo.png' %}" alt="Powered By Voipex" height="60px">
             <!-- <img src="static/serverapp/aritari-logo.png" alt="Powered By Voipex" height="88px"> -->
             <h3 class = "sidenav-title" >Servers</h3>
+          
+             {% if user.is_authenticated %}
+               {% for company in  companies %}
+                 <a href="{% url 'serverapp:server' company %}" style="font-size:20px">{{ company.name }}</a>
+               {% endfor %}
+             {% endif %} 
 
-
-            {% for company in  companies %}
-              <a href="{% url 'serverapp:server'  company %}" style="font-size:20px">{{ company }}</a>
-            {% endfor %}
 <!--             <a href="#">About</a>
             <a href="#">Services</a>
             <a href="#">Clients</a>
@@ -82,7 +83,7 @@
             <!-- For the login pages -->
            {% endblock login_content %}
 
-           <div class="row">     
+<!--            <div class="row">     
 
              <div class="col-md-3">
                 <ul>
@@ -90,18 +91,14 @@
                  <div class="panel panel-default">
                    <div class="panel-heading">Companies</div>
                       <div class="panel-body">
-                        {% for company in  companies %}
-                          <!-- <li><a href="/company_server/{{ company }}/">{{ company }}</a></li> -->
-                          <li><a href="{% url 'serverapp:server'  company %}">{{ company }}</a></li>
 
-                       {% endfor %}
                       </div class="panel-body">
 
 
                 </ul>
 
              </div class="col-md-3">
-
+ -->
 
            {% block server_list %}
            {% endblock server_list %}

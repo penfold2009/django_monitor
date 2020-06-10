@@ -47,22 +47,26 @@ class Server(models.Model):
          else:
            if len(mywalk) == 1 and "No SNMP response" in mywalk[0][0]: 
             print ("No SNMP response from server at %s" % ipobj.ip)
+            ipobj.pingstatus = False
+            ipobj.save()
 
            else : 
                   tunnelidlist = [int(x.split(' = ')[1]) for x in mywalk if 'vibePeerIndex' in x]
                   print (tunnelidlist)
                   for oid in tunnelidlist:
                      linkname = getparameter(self,"vibePeerName" , oid)
-                     if "Error" in linkname:
-                      print (linkname)
+                     print ("linkname is '%s'." % linkname)
+                     if not linkname:
+                      print ("getparameter for link '%s' failed." % linkname)
                      else: 
-                        if ServerLink.objects.filter(name = linkname).first() :
-                            linkobj = ServerLink.objects.filter(name = linkname).first()
+                        linkobj = ServerLink.objects.filter(name = linkname).first()
+                        if linkobj :
                             try : getattr(linkobj, 'server')
                             except Exception as err: print ("Error. Cant get server for link %s ", (linkobj.name,err))
                             else: 
                               if linkobj.server == self:
                                  print ("link %s already exists for server %s" % (linkname, self))
+                       
                         else:
                           print ("Adding %s to %s" % (linkname, self)) 
                           linkobj = ServerLink( name = linkname, oid = oid, server = self)
@@ -76,6 +80,7 @@ class Server(models.Model):
 
 class ServerLink(models.Model):
     name = models.CharField(max_length=200,blank=True, null=True)
+    colour = models.CharField(max_length=200,blank=True, null=True, default="red")
     status = models.CharField(max_length=20, default = "up")
     oid = models.IntegerField(blank=True, null=True)
     # ipaddresses = models.GenericIPAddressField(protocol='ipv4')
@@ -108,7 +113,7 @@ class ServerLink(models.Model):
 
 class ServerIpAddress (models.Model):
     ip =  models.GenericIPAddressField(protocol='ipv4')
-    pingstatus = models.CharField(max_length=20, default="Passed",blank=True, null=True)
+    pingstatus = models.BooleanField(max_length=20, default=True,blank=True, null=True)
     server = models.ForeignKey(Server, on_delete=models.CASCADE,  blank=True, null=True)
 
 
@@ -155,13 +160,22 @@ class MIBParameter (models.Model):
         self.transition_statetime = 0
         self.statetimestart = time()
         self.stateduration = 0
-        
+        setcolour = lambda state: state == 'up' and 'green' or 'red'
+
         if not self.mib_parameter :
-           logprint("Error MIB parameter not set for mib %s" % self.parent_link.tunnelname)
+           print("Error MIB parameter not set for mib %s" % self.parent_link.tunnelname)
         else :    
           self.current_status = self.mib_status = getparameter(self.parent_link.server,self.mib_parameter , self.oid)
           print("'%s' is now set to '%s'"  % (self.name, self.mib_status))
-        
+          
+          ###  set the tunnel status of the parent link. ## 
+          if self.mib_parameter == "vibeTunnelStatus" :
+            self.parent_link.status = self.mib_status
+            self.parent_link.colour = setcolour(self.parent_link.status)
+            print (" ## Setting %s to %s ## " % (self.parent_link.name, self.parent_link.status))
+            self.parent_link.save()
+
+
         ### If a threshold vaue has been specified then check to see if it is given as a percentage or a value.
         ### If getting the max threshold value returns None then correctthresholdvalue is not treated as a percentage.
         if  self.thresholdvalue:   
@@ -185,6 +199,58 @@ class MIBParameter (models.Model):
         
 
 
+  def checkstat(self):
+
+       if not self.mib_parameter :
+          print("Error MIB parameter not set for mib %s" % self.parent_link.tunnelname)
+                 
+       else:          
+        return_string = ""
+        self.current_status = getparameter(self.parent_link.server,self.mib_parameter , self.parent_link.oid)
+        testmode and print("%s: %s : %s" % (self.parent_link.tunnelname, self.mib_parameter, self.current_status)  )
+        if self.current_status and "Error" in self.current_status:
+          print ("Error fetching param %s for link %s" % (self.mib_parameter, self.parent_link.tunnelname)   )
+          self.current_status = "Error"
+          #self.parent_link.linkerror += 1
+          return_string = "Error"
+        else: 
+          
+           ### 
+           if self.correctthresholdvalue:
+             if int(self.current_status)  >= int(self.correctthresholdvalue):
+                self.current_status = "above"
+             else: self.current_status = "below"
+
+
+           if str(self.current_status) != str(self.mib_status):
+              self.transition_statetime = time() - self.statetimestart
+              print (" '%s' link '%s' for server '%s' has changed state to '%s' ." % (self.name, self.parent_link.tunnelname , self.parent_link.server.name, self.current_status) )
+
+              if self.transition_statetime >= 180:
+                 print (" '%s' link '%s' for server '%s' has changed state to '%s' for longer than 3 mins." % (self.name, self.parent_link.tunnelname , self.parent_link.server.name, self.current_status))
+                 self.mib_status  = self.current_status
+                 self.transition_statetime = 0
+                 self.statetimestart = time()
+                 
+                 if self.email == "yes" :
+                    if self.thresholdvalue:  return_string  = ("%s : %s threshold value of %s" % (self.name, self.mib_status, self.thresholdvalue) )
+                    else : return_string  = ("%s : %s" % (self.name, self.mib_status) )
+                 else : return_string = None
+
+             
+              else : return_string = None
+
+           else :
+                 self.transition_statetime = 0
+                 self.statetimestart = time()
+                 return_string = None
+
+           self.parent_link.linkerror = 0
+
+        return return_string
+
+  def __repr__ (self):
+       return str( ("%s" % (self.name) ) )
 
   #########################################################
 

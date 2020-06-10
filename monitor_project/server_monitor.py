@@ -22,13 +22,17 @@ from django.contrib.auth.models import User
 
 
 
-serverfile = 'servers-testmode-django.json'
+##serverfile = 'servers-testmode-django.json'
+serverfile = 'testserver-only-django.json'
+
+
+
 
 if len(sys.argv) != 1:
   serverfile = sys.argv[1]
 
+##else: serverfile = 'testserver-only-django.json'
 else: serverfile = 'servers-testmode-django.json'
-
 
 current_count = 0
 
@@ -73,6 +77,9 @@ if __name__ == '__main__':
 
 	intialise_server_list(server_list)
 	managed1 = Server.objects.get(name = "ManagedServer1")
+	managed2 = Server.objects.get(name = "ManagedServer2")
+    ### get the mib status from the link ###
+	managed2.serverlink_set.get(name = 'Aeftel_02-20190719').mibparameter_set.get(mib_parameter = 'vibeTunnelStatus').mib_status
 	mangedip1 = managed1.serveripaddress_set.first().ip
 	SNMPWalk('vibePeerName',mangedip1,managed1.snmp_community)
 	SNMPWalk('vibeTunnelStatus',mangedip1,managed1.snmp_community)

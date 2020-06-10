@@ -6,27 +6,28 @@ from pysnmp.hlapi import *
 
 def getparameter (server, parameter, oid):
   
-   for linkip in server.serveripaddress_set.all():
+  for linkip in server.serveripaddress_set.all():
+      return_val = False
+      #print("getparamter try ip %s", linkip.ip)
+      if linkip.pingstatus :
+          print ("SNMPGet(%s , %s , %s, %s)" % (parameter, linkip.ip, oid, server.snmp_community))
+          try : stat = SNMPGet(parameter, linkip.ip, oid, server.snmp_community)
+          except Exception as err: print ("Error - %s" % err)
+          else:
+            if "timeout" in str(stat):
+              return_val =  ("Error: " + str(stat) )
+            
+            elif "No Such Instance currently exists" in str(stat):
+              return_val =   ("Error: " + stat[0].split(' = ')[1])
 
-    #print("getparamter try ip %s", linkip.ip)
-    if linkip.pingstatus == "Passed":
-        print ("SNMPGet(%s , %s , %s, %s)" % (parameter, linkip.ip, oid, server.snmp_community))
-        try : stat = SNMPGet(parameter, linkip.ip, oid, server.snmp_community)
-        except Exception as err: print ("Error - %s" % err)
-        else:
-          if "timeout" in str(stat):
-            return_val =  ("Error: " + str(stat) )
-          
-          elif "No Such Instance currently exists" in str(stat):
-            return_val =   ("Error: " + stat[0].split(' = ')[1])
 
-
-          elif len(stat) is not 0:
-           return  stat[0].split(' = ')[1]
-         
-          else : return_val =  ("Error: Unknown" + str(stat))
+            elif len(stat) is not 0:
+             return  stat[0].split(' = ')[1]
+           
+            else : return_val =  ("Error: Unknown" + str(stat))
    
-   return return_val
+  print ("No repsonse to ips returning False.")
+  return return_val
 
 
 

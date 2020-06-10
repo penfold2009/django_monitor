@@ -36,8 +36,6 @@ def intialise_server_list(server_list):
 
 	for server in server_list :
 		if 'logfile' not in server:
-			db_server = Server(name = server['name'], online= "True", snmp_community = server['community'])
-			db_server.save()
 			
 			if Company.objects.all().filter(name = server['company']):
 				db_company = Company.objects.all().get(name = server['company'])
@@ -46,26 +44,32 @@ def intialise_server_list(server_list):
 				db_company = Company(name = server['company'])
 				db_company.save()
 
-			print(db_company.name)
-			print("Adding %s to %s" % (db_server,db_company))
-			db_company.server_set.add(db_server)
-			db_company.save()
+			if Server.objects.filter(name = server['name']):
+				print ("Server '%s' already exists for %s" % (server['name'], server['company']))			
+			else:
+				db_server = Server(name = server['name'], online= "True", snmp_community = server['community'])
+				db_server.save()
 
-            ## ip addresses
-			if 'ipaddress' not in server.keys():
-				print ("Error no ip addresses specified")
-				continue
+				print(db_company.name)
+				print("Adding %s to %s" % (db_server,db_company))
+				db_company.server_set.add(db_server)
+				db_company.save()
 
-			else :
-				for ip in server['ipaddress']:
-					ip = ServerIpAddress(ip=ip, server=db_server)
-					ip.save()
+	            ## ip addresses
+				if 'ipaddress' not in server.keys():
+					print ("Error no ip addresses specified")
+					continue
 
-			db_server.setuplinks(server)
+				else :
+					for ip in server['ipaddress']:
+						ip = ServerIpAddress(ip=ip, server=db_server)
+						ip.save()
 
-			# for link in db_server.serverlink_set.all():
-			# 	print ("Link is ", link)
-				
+				db_server.setuplinks(server)
+
+				# for link in db_server.serverlink_set.all():
+				# 	print ("Link is ", link)
+					
 
 
 

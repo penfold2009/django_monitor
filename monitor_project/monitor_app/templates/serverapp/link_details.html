@@ -22,15 +22,14 @@
 
 {% block link_content %}
 
-           <div class="col-md-3">
+           <div class="col-md-5">
                 <ul>
                  <div class="panel panel-default">
                    <div class="panel-heading">  {{ server_name }} links</div>
                       <div class="panel-body">
 						{% for link in  links %}
-						    <li>{{ link }}</li>
-						    <li>{{ link.ipaddresses }}</li>
-					  	    <br>
+						    <li  style="color: {{ link.colour }}" style="font-size:15px">{{ link }}</li>
+						    <!-- <li>{{ link.ipaddresses }}</li> --> 
 				        {% endfor %}
                       </div class="panel-body">
                 </ul>
