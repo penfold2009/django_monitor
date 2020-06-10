@@ -77,7 +77,7 @@ def company_server(request, company_name):
 
 
 @login_required
-def links(request, server_name):
+def links(request, company_name, server_name):
     print ('### Server name is %s' % server_name)
     server_obj = get_object_or_404(Server, name=server_name)
     company_name = server_obj.company.name
@@ -92,6 +92,11 @@ def links(request, server_name):
 
     template = 'serverapp/link_details.html'
     return render(request, template, context)
+
+
+@login_required
+def linkparameters (request, link_name):
+      print ('### Link name is %s' % link_name)
 
 
 

@@ -80,7 +80,7 @@ class Server(models.Model):
 
 class ServerLink(models.Model):
     name = models.CharField(max_length=200,blank=True, null=True)
-    colour = models.CharField(max_length=200,blank=True, null=True, default="red")
+    colour = models.CharField(max_length=200,blank=True, null=True, default="grey")
     status = models.CharField(max_length=20, default = "up")
     oid = models.IntegerField(blank=True, null=True)
     # ipaddresses = models.GenericIPAddressField(protocol='ipv4')
@@ -160,7 +160,7 @@ class MIBParameter (models.Model):
         self.transition_statetime = 0
         self.statetimestart = time()
         self.stateduration = 0
-        setcolour = lambda state: state == 'up' and 'green' or 'red'
+        setcolour = lambda state: state == 'up' and 'black' or 'grey'
 
         if not self.mib_parameter :
            print("Error MIB parameter not set for mib %s" % self.parent_link.tunnelname)
