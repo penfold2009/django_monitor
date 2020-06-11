@@ -1,21 +1,8 @@
 {% extends 'serverapp/base.html' %}
 
-{% include './server_details.html' %}
 
 {% block server_list %}
-
-     <div class="col-md-3">
-        <ul>
-         <div class="panel panel-default">
-           <div class="panel-heading">{{ company_name }} servers</div>
-              <div class="panel-body">
-				{% for get_server in company_obj.server_set.all %}
-    		      <li><a href="{% url url 'serverapp:links'  'showlinks' company_name get_server.name %}">{{ get_server }}</a></li>
-				{% endfor %}
-              </div class="panel-body">
-        </ul>
-     </div class="col-md-3">
-
+  {% include './list_servers.html' %}
  {% endblock server_list %}
 
 
