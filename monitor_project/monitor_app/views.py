@@ -77,7 +77,7 @@ def company_server(request, company_name):
 
 
 @login_required
-def links(request, company_name, server_name):
+def list_links(request, company_name, server_name):
     print ('### Server name is %s' % server_name)
     server_obj = get_object_or_404(Server, name=server_name)
     company_name = server_obj.company.name
@@ -95,9 +95,25 @@ def links(request, company_name, server_name):
 
 
 @login_required
-def linkparameters (request, link_name):
+def linkparameters (request, company_name, server_name, link_name):
+      print ('### View is linkparameters')
       print ('### Link name is %s' % link_name)
+      link_obj = Company.objects.get(name = company_name).server_set.get(name = server_name).serverlink_set.get(name = link_name)
+      server_obj = get_object_or_404(Server, name=server_name)
+      company_obj = get_object_or_404(Company, name=company_name)
 
+      response = HttpResponse()
+      response.write("You clicked on %s. : %d " % (link_obj, link_obj.oid))
+      template = "serverapp/link_parameters.html"
+      context = {'links': server_obj.serverlink_set.all(), 
+               'company_name': company_name,
+               'companies': Company.objects.all(),
+               'company_obj' : company_obj,
+               'server_name' : server_obj.name,
+               'link_object' : link_obj
+              }
+
+      return render(request, template, context)
 
 
 

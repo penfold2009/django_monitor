@@ -1,26 +1,12 @@
+
 {% extends 'serverapp/base.html' %}
 
 
 {% block server_list %}
   {% include './list_servers.html' %}
- {% endblock server_list %}
-
+{% endblock server_list %}
 
 
 {% block link_content %}
-
-           <div class="col-md-5">
-                <ul>
-                 <div class="panel panel-default">
-                   <div class="panel-heading">  {{ server_name }} links</div>
-                      <div class="panel-body">
-						{% for link in  links %}
-                <li ><a style="color: {{ link.colour }}" style="font-size:15px" href="{% url 'serverapp:linkparameters' server_name link %}">{{ link }}</a></li>
-                <!-- <li  style="color: {{ link.colour }}" style="font-size:15px">{{ link }}</li> -->
-						    <!-- <li>{{ link.ipaddresses }}</li> --> 
-				        {% endfor %}
-                      </div class="panel-body">
-                </ul>
-             </div class="col-md-3">
-
+  {% include './list_links.html' %}
 {% endblock link_content %}

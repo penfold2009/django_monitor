@@ -1,0 +1,22 @@
+
+
+{% block link_content %}
+
+           <div class="col-md-4">
+                <ul>
+                 <div class="panel panel-default">
+                   <div class="panel-heading">  {{ server_name }} links</div>
+                      <div class="panel-body">
+						{% for link in  links %}
+
+                <!-- Better way of creating links using named url patterns             -->
+                <li ><a style="color: {{ link.colour }}" style="font-size:15px" href="{% url 'serverapp:linkparameters' company_obj.name server_name link.name %}">{{ link }}</a></li>
+
+                <!-- Old version to create urls hard coded links. -->
+                <!-- <li><a style="color: {{ link.colour }}" style="font-size:15px" href="/get_linkparams/{{company_obj.name}}/{{server_name}}/{{link.name}}/">{{ link }}</a></li> -->
+				    {% endfor %}
+                </div class="panel-body">
+              </ul>
+          </div class="col-md-3">
+
+{% endblock link_content %}

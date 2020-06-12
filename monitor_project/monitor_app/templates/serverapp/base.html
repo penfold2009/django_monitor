@@ -23,7 +23,7 @@
           <div class="sidenav">
             <img src="{% static 'serverapp/aritari-logo.png' %}" alt="Powered By Voipex" height="60px">
             <!-- <img src="static/serverapp/aritari-logo.png" alt="Powered By Voipex" height="88px"> -->
-            <h3 class = "sidenav-title" >Servers</h3>
+            <h3 class = "sidenav-title" >Companies</h3>
           
              {% if user.is_authenticated %}
                {% for company in  companies %}
@@ -83,28 +83,16 @@
             <!-- For the login pages -->
            {% endblock login_content %}
 
-<!--            <div class="row">     
-
-             <div class="col-md-3">
-                <ul>
-
-                 <div class="panel panel-default">
-                   <div class="panel-heading">Companies</div>
-                      <div class="panel-body">
-
-                      </div class="panel-body">
-
-
-                </ul>
-
-             </div class="col-md-3">
- -->
 
            {% block server_list %}
            {% endblock server_list %}
 
            {% block link_content %}
            {% endblock link_content %}
+
+           {% block link_parameters %}
+           {% endblock link_parameters %}
+         
 
            </div class="row">
         </div class="content container">

@@ -85,6 +85,11 @@ if __name__ == '__main__':
 	SNMPWalk('vibeTunnelStatus',mangedip1,managed1.snmp_community)
 	snmplinks = [(c,x.split('=')[1]) for x in  enumerate(SNMPWalk('vibePeerName',mangedip1,managed1.snmp_community),1) if 'vibePeerName' in x]
 
+	## a string of get commands
+	Company.objects.get(name = 'Aritari').server_set.get(name = 'ManagedServer1').serverlink_set.get(name = 'Abaid Amin_01-20191030')
+	mibs = Company.objects.get(name = 'Aritari').server_set.get(name = 'ManagedServer1').serverlink_set.get(name = 'Abaid Amin_01-20191030').mibparameter_set.all() 
+	
+
 	colin = User.object().first()
 	# aritari = Company(name="Aritari")
 	# aritari.save()

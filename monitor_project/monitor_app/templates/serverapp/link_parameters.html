@@ -1,0 +1,27 @@
+{% extends 'serverapp/base.html' %}
+{% load static %}
+
+
+{% block server_list %}
+  {% include './list_servers.html' %}
+ {% endblock server_list %}
+
+{% block link_content %}
+  {% include './list_links.html' %}
+{% endblock link_content %}
+
+  {% block link_parameters %}
+		  <div class="col-md-3">
+		        <ul>
+		         <div class="panel panel-default">
+		           <div class="panel-heading">  {{ link_object.name }} links</div>
+		              <div class="panel-body">
+		              <h3> Boo! </h3>
+
+                      <p>{{ link_object.mibparameter_set.all }}</p>
+
+
+		              </div class="panel-body">
+		      </ul>
+		  </div class="col-md-3">
+  {% endblock link_parameters %}
