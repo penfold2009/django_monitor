@@ -116,6 +116,12 @@ def linkparameters (request, company_name, server_name, link_name):
       return render(request, template, context)
 
 
+@login_required
+def updatelinks (request, company_name, server_name):
+  print ("## Function: updatelinks ")
+  return HttpResponse("You clicked on update links %s  %s." % (company_name,server_name))
+
+
 
 ###https://docs.djangoproject.com/en/3.0/topics/auth/default/#how-to-log-a-user-in
 def login_view(request):

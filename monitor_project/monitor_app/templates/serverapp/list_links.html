@@ -1,11 +1,18 @@
 
 
 {% block link_content %}
+          <script type=text/javascript>
+             var buttonlink = "{% url 'serverapp:updatelinks' company_obj.name server_name  %}" 
+          </script>
+
 
            <div class="col-md-4">
                 <ul>
                  <div class="panel panel-default">
-                   <div class="panel-heading">  {{ server_name }} links</div>
+                   <div class="panel-heading">  {{ server_name }} links 
+
+                    <button class="btn btn-primary" onclick="location.href= buttonlink">Update Links</button> 
+                      </div>
                       <div class="panel-body">
 						{% for link in  links %}
 
@@ -15,6 +22,8 @@
                 <!-- Old version to create urls hard coded links. -->
                 <!-- <li><a style="color: {{ link.colour }}" style="font-size:15px" href="/get_linkparams/{{company_obj.name}}/{{server_name}}/{{link.name}}/">{{ link }}</a></li> -->
 				    {% endfor %}
+
+
                 </div class="panel-body">
               </ul>
           </div class="col-md-3">

@@ -11,14 +11,14 @@
 {% endblock link_content %}
 
   {% block link_parameters %}
-		  <div class="col-md-3">
+		  <div class="col-md-4">
 		        <ul>
 		         <div class="panel panel-default">
 		           <div class="panel-heading">  {{ link_object.name }} links</div>
 		              <div class="panel-body">
-		              <h3> Boo! </h3>
-
-                      <p>{{ link_object.mibparameter_set.all }}</p>
+         				{% for mibobj in link_object.mibparameter_set.all %}
+                          <p>{{ mibobj.name }} : {{ mibobj.mib_status }}</p>
+       				    {% endfor %}
 
 
 		              </div class="panel-body">

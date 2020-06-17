@@ -14,6 +14,11 @@ class Company(models.Model):
     def __str__(self):
         return self.name
 
+    def test_all_servers(self):
+      for server in  self.server_set.all(): 
+         server.test_all_links() 
+
+
 
 # IntegrityError: NOT NULL constraint failed:
 # ValueError: Field 'id' expected a number but got 'None'.
@@ -72,6 +77,10 @@ class Server(models.Model):
                           linkobj = ServerLink( name = linkname, oid = oid, server = self)
                           linkobj.save()
                           linkobj.setuptests(server_parameters['parameterlist'], oid)
+      
+    def test_all_links(self):
+      for link in self.serverlink_set.all(): 
+        link.test_all_mibs()
 
 
 
@@ -109,7 +118,9 @@ class ServerLink(models.Model):
      # mib_parameter_list = "parent_link name mib_parameter mibtype thresholdvalue correctthresholdvalue current_status mib_status".split()
      # MIBParameter.objects.bulk_update(miblist, mib_parameter_list)
      # MIBParameter.objects.bulk_create(miblist, mib_parameter_list)
-
+    def test_all_mibs(self):
+        for mib in self.mibparameter_set.all():
+          mib.checkstat()
 
 class ServerIpAddress (models.Model):
     ip =  models.GenericIPAddressField(protocol='ipv4')
@@ -163,7 +174,7 @@ class MIBParameter (models.Model):
         setcolour = lambda state: state == 'up' and 'black' or 'grey'
 
         if not self.mib_parameter :
-           print("Error MIB parameter not set for mib %s" % self.parent_link.tunnelname)
+           print("Error MIB parameter not set for mib %s" % self.parent_link.name)
         else :    
           self.current_status = self.mib_status = getparameter(self.parent_link.server,self.mib_parameter , self.oid)
           print("'%s' is now set to '%s'"  % (self.name, self.mib_status))
@@ -202,14 +213,14 @@ class MIBParameter (models.Model):
   def checkstat(self):
 
        if not self.mib_parameter :
-          print("Error MIB parameter not set for mib %s" % self.parent_link.tunnelname)
+          print("Error MIB parameter not set for mib %s" % self.parent_link.name)
                  
        else:          
         return_string = ""
         self.current_status = getparameter(self.parent_link.server,self.mib_parameter , self.parent_link.oid)
-        testmode and print("%s: %s : %s" % (self.parent_link.tunnelname, self.mib_parameter, self.current_status)  )
+        print("%s: %s : %s" % (self.parent_link.name, self.mib_parameter, self.current_status)  )
         if self.current_status and "Error" in self.current_status:
-          print ("Error fetching param %s for link %s" % (self.mib_parameter, self.parent_link.tunnelname)   )
+          print ("Error fetching param %s for link %s" % (self.mib_parameter, self.parent_link.name)   )
           self.current_status = "Error"
           #self.parent_link.linkerror += 1
           return_string = "Error"
@@ -224,13 +235,14 @@ class MIBParameter (models.Model):
 
            if str(self.current_status) != str(self.mib_status):
               self.transition_statetime = time() - self.statetimestart
-              print (" '%s' link '%s' for server '%s' has changed state to '%s' ." % (self.name, self.parent_link.tunnelname , self.parent_link.server.name, self.current_status) )
+              print (" '%s' link '%s' for server '%s' has changed state to '%s' ." % (self.name, self.parent_link.name , self.parent_link.server.name, self.current_status) )
 
               if self.transition_statetime >= 180:
-                 print (" '%s' link '%s' for server '%s' has changed state to '%s' for longer than 3 mins." % (self.name, self.parent_link.tunnelname , self.parent_link.server.name, self.current_status))
+                 print (" '%s' link '%s' for server '%s' has changed state to '%s' for longer than 3 mins." % (self.name, self.parent_link.name , self.parent_link.server.name, self.current_status))
                  self.mib_status  = self.current_status
                  self.transition_statetime = 0
                  self.statetimestart = time()
+                 self.mib_status.save()
                  
                  if self.email == "yes" :
                     if self.thresholdvalue:  return_string  = ("%s : %s threshold value of %s" % (self.name, self.mib_status, self.thresholdvalue) )
