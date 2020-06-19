@@ -32,6 +32,7 @@ class Server(models.Model):
     online = models.BooleanField(default=True)
     lastupdate = models.DateTimeField(default = timezone.now)
     company = models.ForeignKey(Company, on_delete=models.CASCADE, blank=True, null=True)
+    email_list = models.TextField(blank=True, null=True)
     teststring = ""
 
     def __str__(self):
@@ -80,6 +81,7 @@ class Server(models.Model):
       
     def test_all_links(self):
       for link in self.serverlink_set.all(): 
+        print ("Testing ", link.name)
         link.test_all_mibs()
 
 
@@ -100,17 +102,21 @@ class ServerLink(models.Model):
 
     def setuptests (self, parameter_list, oid):
       miblist = []
+      emailtest  = lambda checkemail: (checkemail == 'Yes' or checkemail  == 'yes' or checkemail == True) and True or False
       # print ('Parameters for link %s are %s' % (self, parameter_list))
       ### paramkey is the name of the test eg TunnelStatus ##
       for paramkey in parameter_list:
         print ("Setting up Parameter %s" % paramkey)
         subparam = parameter_list[paramkey]
         print ("mib subparameter %s"  % subparam)
-        mib = MIBParameter( name = subparam['name'], 
+        mib = MIBParameter ( name = subparam['name'], 
               mib_parameter = subparam['mib_parameter'],
               thresholdvalue = 'thresholdvalue' in subparam.keys() and subparam['thresholdvalue'] or None,
               oid = oid,
-              parent_link = self)
+              parent_link = self,
+              email = emailtest(subparam['email'])
+              )
+
         mib.setupmib(subparam)
         miblist.append(mib)
 
@@ -119,8 +125,9 @@ class ServerLink(models.Model):
      # MIBParameter.objects.bulk_update(miblist, mib_parameter_list)
      # MIBParameter.objects.bulk_create(miblist, mib_parameter_list)
     def test_all_mibs(self):
-        for mib in self.mibparameter_set.all():
-          mib.checkstat()
+          return [  mib.checkstat() for mib in self.mibparameter_set.all() ]
+
+
 
 class ServerIpAddress (models.Model):
     ip =  models.GenericIPAddressField(protocol='ipv4')
@@ -132,9 +139,9 @@ class ServerIpAddress (models.Model):
 class MIBParameter (models.Model):
 
   parent_link = models.ForeignKey(ServerLink, on_delete=models.CASCADE, blank=True, null=True)
-  #transition_statetime  = models.FloatField(blank=True, null=True)
-  #statetimestart  = models.FloatField(default = time(),blank=True, null=True )
-  #stateduration  = models.FloatField(blank=True, null=True)
+  transition_statetime  = models.FloatField(blank=True, null=True)
+  statetimestart  = models.FloatField(default = time(),blank=True, null=True )
+  stateduration  = models.FloatField(blank=True, null=True)
   name = models.CharField(max_length=20,blank=True, null=True)
   mib_parameter = models.CharField(max_length=20,blank=True, null=True)
   mibtype = models.CharField(max_length=20, default="statechange",blank=True, null=True)
@@ -143,6 +150,7 @@ class MIBParameter (models.Model):
   current_status = models.CharField(max_length=20, default = None,blank=True, null=True)
   mib_status = models.CharField(max_length=20, default = None,blank=True, null=True)
   oid = models.IntegerField(blank=True, null=True)
+  email = models.BooleanField(max_length=20, default=True)
 
   ## Check the python converted mib file for the threshold value ##
 
@@ -242,9 +250,9 @@ class MIBParameter (models.Model):
                  self.mib_status  = self.current_status
                  self.transition_statetime = 0
                  self.statetimestart = time()
-                 self.mib_status.save()
+                 self.save()
                  
-                 if self.email == "yes" :
+                 if self.email :
                     if self.thresholdvalue:  return_string  = ("%s : %s threshold value of %s" % (self.name, self.mib_status, self.thresholdvalue) )
                     else : return_string  = ("%s : %s" % (self.name, self.mib_status) )
                  else : return_string = None

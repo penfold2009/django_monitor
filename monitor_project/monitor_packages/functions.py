@@ -45,9 +45,14 @@ def intialise_server_list(server_list):
 				db_company.save()
 
 			if Server.objects.filter(name = server['name']):
-				print ("Server '%s' already exists for %s" % (server['name'], server['company']))			
+				print ("Server '%s' already exists for %s" % (server['name'], server['company']))
 			else:
-				db_server = Server(name = server['name'], online= "True", snmp_community = server['community'])
+				db_server = Server( name = server['name'], 
+					                online= "True", 
+					                snmp_community = server['community'], 
+                                    email_list = server['emaillist']
+					        )
+
 				db_server.save()
 
 				print(db_company.name)

@@ -78,6 +78,9 @@ if __name__ == '__main__':
 	intialise_server_list(server_list)
 	managed1 = Server.objects.get(name = "ManagedServer1")
 	managed2 = Server.objects.get(name = "ManagedServer2")
+	testserver  = Server.objects.get(name = "Testserver")
+
+	
     ### get the mib status from the link ###
 	managed2.serverlink_set.get(name = 'Aeftel_02-20190719').mibparameter_set.get(mib_parameter = 'vibeTunnelStatus').mib_status
 	mangedip1 = managed1.serveripaddress_set.first().ip
