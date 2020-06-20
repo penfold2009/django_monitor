@@ -119,6 +119,7 @@ def linkparameters (request, company_name, server_name, link_name):
 @login_required
 def updatelinks (request, company_name, server_name):
   print ("## Function: updatelinks ")
+  Server.objects.get(name = server_name).test_all_links()
   return HttpResponse("You clicked on update links %s  %s." % (company_name,server_name))
 
 

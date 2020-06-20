@@ -76,6 +76,8 @@ if __name__ == '__main__':
 
 
 	intialise_server_list(server_list)
+	
+	aritari = Company.objects.get(name = 'Aritari')
 	managed1 = Server.objects.get(name = "ManagedServer1")
 	managed2 = Server.objects.get(name = "ManagedServer2")
 	testserver  = Server.objects.get(name = "Testserver")
