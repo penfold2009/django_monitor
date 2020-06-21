@@ -5,7 +5,7 @@ django.setup()
 from monitor_app.models import *
 import datetime
 
-import ezgmail  ### ensure token.json  token.pickle exist in the running dir
+#import ezgmail  ### ensure token.json  token.pickle exist in the running dir
 from time import *
 from os import system, _exit, remove, environ
 from pathlib import Path
@@ -67,7 +67,38 @@ print ("status file is %s" % statusfile)
 
 
 
+def test_companies():
+	for company in Company.objects.all():
+		test_servers(company)
 
+
+def test_servers(company):
+  for server in company.server_set.all():
+    sub, mail = test_server_links(server)
+    if mail is not None :
+      print ("####",sub)
+      print ("####",mail)
+
+
+
+def test_server_links(server):
+
+  result_string = None
+  subject = None
+
+  for link in server.serverlink_set.all(): 
+    for mib in link.mibparameter_set.all(): 
+        result = mib.checkstat() 
+        if result is not None: 
+            if result_string is None:
+               result_string = link.name + " : " + result
+            else : result_string = result_string + "\n" + link.name + " : " + result 
+  
+  if result_string is not None:
+     subject = "Change of state for links on %s" % server.name              
+     result_string = "The following links change changed state on %s :" % (server.name) + "\n" + result_string
+  
+  return subject , result_string
 
 
 
@@ -96,6 +127,27 @@ if __name__ == '__main__':
 	
 
 	colin = User.object().first()
+
+
+	import shelve
+	db =shelve.open('shelve-aritari-results.shelve')
+	aritari_results = db['aritari_results']
+ 
+	for company in aritari_results.keys(): 
+	     #print(company) 
+	     for server in aritari_results[company].keys(): 
+	         #print (server) 
+	         for link in aritari_results[company][server].keys(): 
+	             #print (link) 
+	             for mibkey,mibval in aritari_results[company][server][link].items(): 
+	                 if mibval is not None: 
+	                  #print (company, server, link, mibkey, mibval) 
+ 	                    emaillist.append(link) 
+
+
+
+
+
 	# aritari = Company(name="Aritari")
 	# aritari.save()
 

@@ -256,17 +256,17 @@ class MIBParameter (models.Model):
                  self.save()
                  
                  if self.email :
-                    if self.thresholdvalue:  return_string  = {self.name :("%s : %s threshold value of %s" % (self.name, self.mib_status, self.thresholdvalue)) }
-                    else : return_string  = {self.name: ("%s : %s" % (self.name, self.mib_status))}
-                 else : return_string = {self.name: None }
+                    if self.thresholdvalue:  return_string  = ("%s : %s threshold value of %s" % (self.name, self.mib_status, self.thresholdvalue))
+                    else : return_string  = ("%s : %s" % (self.name, self.mib_status))
+                 else : return_string = None
 
              
-              else : return_string = {self.name: None }
+              else : return_string = None
 
            else :
                  self.transition_statetime = 0
                  self.statetimestart = time()
-                 return_string = {self.name: None }
+                 return_string =None
 
            self.parent_link.linkerror = 0
 
