@@ -1,6 +1,7 @@
 from os import system
 from monitor_app.models import *
 import re
+import ezgmail  ### ensure token.json  token.pickle exist in the running dir
 
 
 def ping(server):
@@ -14,6 +15,16 @@ def ping(server):
 		else: ipobj.pingstatus = "Failed"
 		ipobj.save()
 
+
+
+
+def sendemail(server, subject, message):
+
+    for emailaddr in server.email_list:
+       logprint ("Sending email to %s" % emailaddr)
+       try: ezgmail.send(emailaddr,subject,message)
+       except Exception as err: logprint ("failed to send email - %s" % err)
+       sleep(1)
 
 
 
