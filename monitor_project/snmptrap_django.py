@@ -53,12 +53,6 @@ import sys
 
 TESTMODE = True
 
-if  TESTMODE is False:
-  original_stdout = sys.stdout # Save a reference to the original standard output
-  f = open('snmptrap_generic.log', 'w',1)  ## use a 1 line buffer so writes to disk straight away.
-  sys.stdout = f # Change the standard output to the file we created.
-
-
 ## https://stackoverflow.com/questions/54882149/using-pysnmp-as-trap-receiver-with-own-vendor-mib
 ## http://snmplabs.com/pysnmp/examples/smi/manager/browsing-mib-tree.html#pdu-var-binds-to-mib-objects
 from pysnmp.smi import builder, view, compiler, rfc1902
@@ -73,6 +67,7 @@ mibBuilder.loadModules('VOIPEX-VIBE-MIB')
 
 if TESTMODE :
 
+  SERVERIP = "127.0.0.1"
   email_dict = {
     "ARITARI" : [ "colin.penfound@aritari.com" ],
     "OPTAINIUM" :[ "colin.penfound@aritari.com", "fred.flintstone@mailinator.com" ]
@@ -80,10 +75,15 @@ if TESTMODE :
 
 else:
 
+  original_stdout = sys.stdout # Save a reference to the original standard output
+  f = open('snmptrap_generic.log', 'w',1)  ## use a 1 line buffer so writes to disk straight away.
+  sys.stdout = f # Change the standard output to the file we created.
+  
+  SERVERIP = "78.129.203.122"
   email_dict = {
   "ARITARI"   : [ "colin.penfound@aritari.com", "keith.balding@aritari.com" ],
   "OPTAINIUM" : [ "colin.penfound@aritari.com", "keith.balding@aritari.com", "peter.elsey@optainium.com" ]
-}
+  }
 
 
 
@@ -109,14 +109,14 @@ snmpEngine = engine.SnmpEngine()
 config.addTransport(
     snmpEngine,
     udp.domainName + (1,),
-    udp.UdpTransport().openServerMode(('78.129.203.122', 1162))
+    udp.UdpTransport().openServerMode((SERVERIP, 1162))
 )
 
 # UDP over IPv4, second listening interface/port
 config.addTransport(
     snmpEngine,
     udp.domainName + (2,),
-    udp.UdpTransport().openServerMode(('78.129.203.122', 2162))
+    udp.UdpTransport().openServerMode((SERVERIP, 2162))
 )
 
 # SNMPv1/2c setup
@@ -126,7 +126,46 @@ config.addV1System(snmpEngine, 'my-area', 'public_testserver')
 
 
 
+##############################################################################
+def updatedb(server_ip_address, linkname, status):
 
+   print("Up dating server entrie.")   
+
+   ## Get the server from the ip address
+   getip = ServerIpAddress.objects.filter(ip = '78.129.231.64')
+   if getip.count() == 0:
+     print ("IP %s not found" % server_ip_address)
+     return
+   
+   elif getip.count() > 1 :
+     print ("IP %s found multiple entries." % server_ip_address)
+     for ipobj in getip: print(ipobj.ip, ipobj.server.name)
+     return
+
+   else:
+     serveripobj = getip.first()
+     server = serveripobj.server
+     
+     ## Get the link. ##
+     getlinkobj = server.serverlink_set.filter(name = linkname)
+     
+     if getlinkobj.count() == 0:
+      print("Link '%s' not found." % linkname)
+      return
+
+     elif getlinkobj.count() > 0:
+        print ("Link %s found multiple entries." % linkname)
+        for linkobj in getlinkobj: print ( "%s %s" % (linkobj.name, linkobj.server.name) )
+     
+     else:
+        link = getlinkobj.first()
+        link.staus = status
+        print ("Updating status of link %s to %s" % (link, status))
+        link.save()
+        return
+
+
+######################################################################################
 def process_parameters (snmpstring):
       
       parameters = "ipaddress|mac|name|addr|status|hostname".split('|')
@@ -153,7 +192,7 @@ def process_parameters (snmpstring):
              sendemail(email_dict["OPTAINIUM"], subject, message)
           else : sendemail(email_dict["ARITARI"], subject, message)
 
-
+      updatedb( parameter_dict['ipaddress'], parameter_dict['name'], status )
 
 
 ##############################################################################
