@@ -1,9 +1,11 @@
 monitor_project/__pycache__/
 monitor_project/db.sqlite3
 monitor_project/monitor_packages/__pycache__/
-monitor_project/monitor_packages/gitignore
 monitor_project/new_server_monitoring.log
 monitor_project/server_monitor.py.temp
 monitor_project/servers-testmode-django.json
 monitor_project/servers-testmode.json
 servers-testmode.json
+monitor_project/monitor_app/__pycache__/
+monitor_project/monitor_project/__pycache__/
+
