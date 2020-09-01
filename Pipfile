@@ -50,6 +50,7 @@ Django = "*"
 EZGmail = "*"
 ipython_genutils = "*"
 Pygments = "*"
+daphne = "*"
 
 [requires]
 python_version = "3.6"

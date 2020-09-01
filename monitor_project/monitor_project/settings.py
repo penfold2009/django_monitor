@@ -20,12 +20,15 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'i9i3ec4w5knc@hpur33jb163)qe1dlng%q1md89yvjw@ryx=y_'
+# SECRET_KEY = 'i9i3ec4w5knc@hpur33jb163)qe1dlng%q1md89yvjw@ryx=y_'
+# Read secret key from a file
+with open('/etc/apache2/django.key') as f:
+    SECRET_KEY = f.read().strip()
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['78.129.203.122']
 
 
 # Application definition
@@ -124,6 +127,12 @@ STATIC_URL = '/static/'
 ##https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Authentication
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/accounts/login/'
+# Add these new lines
 
 
+## https://scotch.io/tutorials/working-with-django-templates-static-files#toc-settings-for-managing-static-files
+#STATICFILES_DIRS = (
+#    os.path.join(BASE_DIR, 'static'),
+#)
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
