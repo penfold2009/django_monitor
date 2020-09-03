@@ -1,3 +1,6 @@
+#!/mnt/D64242DF4242C3C9/work/GIT_Repos/django_monitor/venv_dj_monitor/bin/python
+
+
 import os
 os.environ.setdefault("DJANGO_SETTINGS_MODULE","monitor_project.settings")
 import django
@@ -126,7 +129,7 @@ if __name__ == '__main__':
 	mibs = Company.objects.get(name = 'Aritari').server_set.get(name = 'ManagedServer1').serverlink_set.get(name = 'Abaid Amin_01-20191030').mibparameter_set.all() 
 	
 
-	colin = User.object().first()
+	colin = User.objects().first()
 
 
 	import shelve
