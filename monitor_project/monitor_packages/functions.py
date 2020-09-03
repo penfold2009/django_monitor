@@ -26,6 +26,7 @@ def sendemail(server, subject, message):
        except Exception as err: logprint ("failed to send email - %s" % err)
        sleep(1)
 
+
 ##
 
 
@@ -86,6 +87,43 @@ def intialise_server_list(server_list):
 				# for link in db_server.serverlink_set.all():
 				# 	print ("Link is ", link)
 					
+
+
+def test_server_links(server):
+
+  result_string = None
+  subject = None
+
+  for link in server.serverlink_set.all(): 
+    for mib in link.mibparameter_set.all(): 
+        result = mib.checkstat() 
+        if result is not None: 
+            if result_string is None:
+               result_string = link.name + " : " + result
+            else : result_string = result_string + "\n" + link.name + " : " + result 
+  
+  if result_string is not None:
+     subject = "Change of state for links on %s" % server.name              
+     result_string = "The following links change changed state on %s :" % (server.name) + "\n" + result_string
+  
+  return subject , result_string
+
+
+
+def test_servers(company):
+  for server in company.server_set.all():
+    sub, mail = test_server_links(server)
+    if mail is not None :
+      print ("####",sub)
+      print ("####",mail)
+
+
+
+def test_companies():
+	for company in Company.objects.all():
+		test_servers(company)
+
+
 
 
 
