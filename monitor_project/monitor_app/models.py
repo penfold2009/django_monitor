@@ -15,10 +15,12 @@ class Company(models.Model):
         return self.name
 
     def test_all_servers(self):
-        ## for server in  self.server_set.all(): 
-        ## server.test_all_links().values() returns a dict view not just the values so need to cast as a lit and get
+         for server in  self.server_set.all(): 
+            server.test_all_links() 
+
+        ## returns a dict view not just the values so need to cast as a list and get
         ## get the first element. See :  https://docs.python.org/3/library/stdtypes.html#dictionary-view-objects
-        return  {self.name: {server.name:list(server.test_all_links().values())[0]  for server in self.server_set.all() } }
+        ## return  {self.name: {server.name:list(server.test_all_links().values())[0]  for server in self.server_set.all() } }
 
 
 
@@ -82,10 +84,10 @@ class Server(models.Model):
                           linkobj.setuptests(server_parameters['parameterlist'], oid)
       
     def test_all_links(self):
-      #for link in self.serverlink_set.all(): 
+      for link in self.serverlink_set.all(): 
         #print ("Testing ", link.name)
-        #link.test_all_mibs()
-      return {self.name: { link.name :list(link.test_all_mibs().values())[0] for link in self.serverlink_set.all()}  }
+        link.test_all_mibs()
+      #return {self.name: { link.name :list(link.test_all_mibs().values())[0] for link in self.serverlink_set.all()}  }
 
 
 
@@ -128,7 +130,10 @@ class ServerLink(models.Model):
      # MIBParameter.objects.bulk_update(miblist, mib_parameter_list)
      # MIBParameter.objects.bulk_create(miblist, mib_parameter_list)
     def test_all_mibs(self):
-          return {self.name: {mib.name :list(mib.checkstat().values())[0] for mib in self.mibparameter_set.all()} }
+          for mib in self.mibparameter_set.all():
+            mib.checkstat()
+
+          #return {self.name: {mib.name :list(mib.checkstat().values())[0] for mib in self.mibparameter_set.all()} }
 
 
 

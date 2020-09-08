@@ -6,6 +6,17 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 import shelve
+from monitor_packages.functions import *
+
+# https://www.edureka.co/community/73109/how-do-i-call-a-django-function-on-button-click
+
+
+
+def test_links (request, server_name):
+          server_obj = get_object_or_404(Server, name=server_name)
+          # test_server_links(server_obj)
+          Server.objects.get(name = server_name).test_all_links()
+          return HttpResponse(f"Updating links for {server_obj.name}")
 
 
 def serverlist(request):

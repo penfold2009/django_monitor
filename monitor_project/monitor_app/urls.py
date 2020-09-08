@@ -12,8 +12,8 @@ urlpatterns = [ ##path('', views.login_view, name='login_view'),
                 path('company_server/<str:company_name>/', views.company_server, name='server'),
 
                 path('company_servertable/<str:company_name>/', views.company_servertable, name='servertable'),
+                path('update_links/<str:server_name>/', views.test_links, name='test_links'),
 
-                path('updatelinks/<str:company_name>/<str:server_name>', views.updatelinks, name='updatelinks'),
                 re_path(r'^showlinks/(?P<company_name>.+)/(?P<server_name>.+)/$', views.list_links, name='links'), #https://docs.djangoproject.com/en/3.0/topics/http/urls/#using-regular-expressions
                 re_path(r'^get_linkparams2/(?P<company_name>.+)/(?P<server_name>[\w\s]+)/(?P<link_name>.+)/$', views.linkparameters2, name='linkparameters2'), #https://docs.djangoproject.com/en/3.0/topics/http/urls/#using-regular-expressions
                 re_path(r'^get_linkparams/(?P<company_name>.+)/(?P<server_name>[\w\s]+)/(?P<link_name>.+)/$', views.linkparameters, name='linkparameters'), #https://docs.djangoproject.com/en/3.0/topics/http/urls/#using-regular-expressions

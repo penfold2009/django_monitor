@@ -1,7 +1,5 @@
 {% extends 'serverapp/base2.html' %}
 
-
-
 {% block servertable %}
 
 
@@ -10,15 +8,26 @@
 
   <div class="col-md-1">
   </div class="col-md-1">
-
   <div class="col-md-7">
-      <!-- <div class="container-fluid"> -->
 
       {% for server in servers %}
 
         <hr><br>
-        <h3> {{ server.name }}</h3>
+         <h3 style ="display: inline"> {{ server.name }}</h3>
 
+         <!-- <button  style ="display: inline; position: absolute; right: 0" type="button" class="btn btn-light">Update</button> -->
+        
+          <button 
+            type="submit" 
+            class="btn btn-light" 
+            style ="display: inline; position: absolute; right: 0"
+            value="Go" 
+            onclick="location.href='{% url 'serverapp:test_links' server.name %}'" 
+            name='mybtn2'>
+              Update
+          </button>
+        
+        
         <table class="table table-hover">
 
           <thead>
@@ -46,32 +55,8 @@
 
    </div class="col-md-4">
 
-
-<!--   <div class="col-md-3">
-      <div class="col-md-3" style="position: fixed"> 
-         <label>Link Details</label>
-         <table class="table table-hover">
-          <thead>
-            <tr>
-              <th>Parameter</th>
-              <th>Value</th>
-            </tr>
-          </thead>
-           <tbody>
-            <tr><td>Status</td><td>Up</td></tr>  
-            <tr><td>Quality</td><td>95%</td></tr>  
-           </tbody>
-          </table>
-      </div class="col-md-3"  style="position: fixed">
-    </div class="col-md-3">
-</div class="row">
-
- -->
 {% block parameter_table %}
 {% endblock parameter_table %}
-
-
-
 
 
 {% endblock servertable %}
