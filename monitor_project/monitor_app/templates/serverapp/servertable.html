@@ -1,0 +1,89 @@
+{% extends 'serverapp/base2.html' %}
+
+
+
+{% block servertable %}
+
+
+ <div class="row">
+    <!--   --> <div class="container-fluid">
+
+  <div class="col-md-1">
+  </div class="col-md-1">
+
+  <div class="col-md-7">
+      <!-- <div class="container-fluid"> -->
+
+      {% for server in servers %}
+
+        <hr><br>
+        <h3> {{ server.name }}</h3>
+
+        <table class="table table-hover">
+
+          <thead>
+            <tr>
+              <th>No.</th>
+              <th>Link  Name</th>
+              <th>Last Name</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for link in server.serverlink_set.all %}
+              <tr style="color: {{ link.colour }}">
+                <th scope="row"> {{ link.oid }}</th>
+                <td>{{  link.name }}</td>
+                <td>{{ link.status }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+
+        </table>
+        <br><br>
+     
+      {% endfor %}
+
+    <!-- </div class="container-fluid"> -->
+   </div class="col-md-4">
+
+
+  <div class="col-md-3">
+    <!-- <div class="container-fluid"> -->
+    <!-- <div class="inflow"> -->
+   
+      <div class="col-md-3" style="position: fixed"> 
+   
+       <!-- <div class="form-group"> -->
+         
+         <label>Link Details</label>
+         <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+
+           <tbody>
+            <tr><td>Status</td><td>Up</td></tr>  
+            <tr><td>Quality</td><td>95%</td></tr>  
+           </tbody>
+          </table>
+       <!-- </div class="form-group"> -->
+      </div class="col-md-3"  style="position: fixed">
+   <!-- </div class="inflow"> -->
+
+
+
+  <!-- </div class="container-fluid"> -->
+
+    </div class="col-md-3">
+
+</div class="row">
+
+
+
+{% endblock servertable %}
+
+

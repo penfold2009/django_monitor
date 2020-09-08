@@ -7,7 +7,12 @@ app_name = 'serverapp'  ##https://docs.djangoproject.com/en/3.0/intro/tutorial03
 urlpatterns = [ ##path('', views.login_view, name='login_view'),
                 path('', views.all_details, name='all_details'),
 	            path('testpathfornoreason/', views.serverlist, name='viewname-serverlist'),
+	            path('base2', views.base2, name='viewname-base2'),
+	            path('new_entry', views.new_entry, name='viewname-new_entry'),
                 path('company_server/<str:company_name>/', views.company_server, name='server'),
+
+                path('company_servertable/<str:company_name>/', views.company_servertable, name='servertable'),
+
                 path('updatelinks/<str:company_name>/<str:server_name>', views.updatelinks, name='updatelinks'),
                 re_path(r'^showlinks/(?P<company_name>.+)/(?P<server_name>.+)/$', views.list_links, name='links'), #https://docs.djangoproject.com/en/3.0/topics/http/urls/#using-regular-expressions
                 re_path(r'^get_linkparams/(?P<company_name>.+)/(?P<server_name>[\w\s]+)/(?P<link_name>.+)/$', views.linkparameters, name='linkparameters'), #https://docs.djangoproject.com/en/3.0/topics/http/urls/#using-regular-expressions

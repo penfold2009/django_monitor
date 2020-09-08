@@ -106,7 +106,7 @@ a:hover {
 	z-index:1;
 	top:0;
 	left:0;
-	background-color:#ffff;
+	background-color:#b1caed;
 	overflow-x: :hidden;
 	padding-top:20px;
 }
@@ -132,3 +132,13 @@ a:hover {
 .sidenav-title{
 	padding: 0px 10px;	
 }
+
+/*div.inflow {
+  position: relative; 
+}
+
+div.fixed {
+  position: fixed; 
+}
+
+*/

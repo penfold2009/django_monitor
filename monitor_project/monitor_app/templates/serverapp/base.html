@@ -20,22 +20,11 @@
     
     <body>
     
-          <div class="sidenav">
-            <img src="{% static 'serverapp/aritari-logo.png' %}" alt="Powered By Voipex" height="60px">
-            <!-- <img src="static/serverapp/aritari-logo.png" alt="Powered By Voipex" height="88px"> -->
-            <h3 class = "sidenav-title" >Companies</h3>
-          
-             {% if user.is_authenticated %}
-               {% for company in  companies %}
-                 <a href="{% url 'serverapp:server' company %}" style="font-size:20px">{{ company.name }}</a>
-               {% endfor %}
-             {% endif %} 
 
-<!--             <a href="#">About</a>
-            <a href="#">Services</a>
-            <a href="#">Clients</a>
-            <a href="#">Contact</a> -->
-          </div> 
+
+
+
+
 
           <div class="main">
 
@@ -64,9 +53,9 @@
 
 
 
-           </div class="container-fluid">
-           </nav class="navbar  bg-info">
-
+          </div class="container-fluid">
+        </nav class="navbar  bg-info">
+ 
           <!-- Side bar stuff -->
            {% block sidebar %}
            <!-- empty at the moment -->
@@ -74,8 +63,27 @@
         <!-- <div class="container-fluid"> -->
        <div class="content container">   
 
+     <div class="col-md-1 ">
 
 
+          <div class="sidenav">
+            <img src="{% static 'serverapp/aritari-logo.png' %}" alt="Powered By Voipex" height="60px">
+            <!-- <img src="static/serverapp/aritari-logo.png" alt="Powered By Voipex" height="88px"> -->
+                  <h3 class = "sidenav-title" >Companies</h3>
+                    <ul class="list-group">
+                   {% if user.is_authenticated %}
+                     {% for company in  companies %}
+                       <li class="list-group-item" ><a href="{% url 'serverapp:server' company %}" style="font-size:15px; margin: -10px">{{ company.name }}</a></li>
+                     {% endfor %}
+                   {% endif %} 
+                   </ul>
+      <!--             <a href="#">About</a>
+                  <a href="#">Services</a>
+                  <a href="#">Clients</a>
+                  <a href="#">Contact</a> -->
+          </div  class="sidenav">
+
+     </div class="col-md-1 ">
 
 
            {% block login_content %}

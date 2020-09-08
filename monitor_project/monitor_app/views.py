@@ -11,15 +11,40 @@ import shelve
 def serverlist(request):
     return HttpResponse("Hello, world. You're at the server list index.")
 
+@login_required
 
-def server(request, server_id):
-    server = Server.objects.get(pk=server_id)
-    links = server.link_set.all()
+def company_servertable(request, company_name):
+    company_obj = get_object_or_404(Company, name=company_name)
+    context = {'servers': company_obj.server_set.all(), 
+           'company_name': company_name , 
+           'company_obj':company_obj,
+           'companies': Company.objects.all()
+           }
+
+    template = 'serverapp/servertable.html'
+    return render(request, template, context)
+
+    # return HttpResponse("You're looking at server %s." % company_obj.name)
 
 
-    return HttpResponse("You're looking at server %s." % server.name)
+@login_required
+def base2(request):
+      # company_obj = Company.objects.filter(name=company_name).first()
+    #company_obj = Company.objects.get(name=company_name)
+    context = {'companies': Company.objects.all()}
 
-def company(request, company_id):
+    template = 'serverapp/base2.html'
+    return render(request, template,context)
+
+
+@login_required
+def new_entry(request):
+  template='serverapp/form1.html'
+  return render(request, template)
+
+
+## Not used###################################################
+def company_old(request, company_id):
 
     linklist = []
     serverlist = []
@@ -35,6 +60,8 @@ def company(request, company_id):
 
     return HttpResponse(response)
 ##    return HttpResponse("You're looking at company %s." % company)
+####################################################################
+
 
 
 ## @login_required ###  https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Authentication
@@ -55,6 +82,7 @@ def all_details(request):
     else :
       return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     
+
 
 
 
