@@ -143,6 +143,31 @@ def linkparameters (request, company_name, server_name, link_name):
 
       return render(request, template, context)
 
+@login_required
+def linkparameters2 (request, company_name, server_name, link_name):
+      print ('### View is linkparameters2')
+      print ('### Link name is %s' % link_name)
+      print (f'### server name is {server_name}')
+      print (f'### company name is {company_name}')
+      link_obj = Company.objects.get(name = company_name).server_set.get(name = server_name).serverlink_set.get(name = link_name)
+      server_obj = get_object_or_404(Server, name=server_name)
+      company_obj = get_object_or_404(Company, name=company_name)
+
+      response = HttpResponse()
+      response.write("You clicked on %s. : %d " % (link_obj, link_obj.oid))
+      template = "serverapp/parameter_table.html"
+      context = {'links': server_obj.serverlink_set.all(), 
+               'company_name': company_name,
+               'companies': Company.objects.all(),
+               'company_obj' : company_obj,
+               'server_name' : server_obj.name,
+               'link_object' : link_obj,
+               'servers': company_obj.server_set.all()
+              }
+
+      return render(request, template, context)
+
+
 
 @login_required
 def updatelinks (request, company_name, server_name):
