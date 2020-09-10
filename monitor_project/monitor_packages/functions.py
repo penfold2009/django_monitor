@@ -2,6 +2,8 @@ from os import system
 from monitor_app.models import *
 import re
 import ezgmail  ### ensure token.json  token.pickle exist in the running dir
+from pathlib import Path
+import json
 
 
 def ping(server):
@@ -27,9 +29,6 @@ def sendemail(server, subject, message):
        sleep(1)
 
 
-##
-
-
 # def intialise_server_list(server_list, serverfile):
 # 
 #   try: return [ Server(ipaddresslist = server['ipaddress'],
@@ -43,8 +42,44 @@ def sendemail(server, subject, message):
 #     logprint ("Error - %s" % err)
 
 
+def setup_serverlist( serverfile = 'servers-aritari.json'):
 
-def intialise_server_list(server_list):
+	myfile  = Path(environ['PWD'] + '/' + serverfile)
+
+	if myfile.is_file():
+	  with open(myfile) as json_file: server_list = json.load(json_file)
+	else:
+	  print ("File not found %s" % myfile)
+	  server_list = [{"testmode":0, "logfile": "server_monitoring.log", "statusfile":"server_status.log"}]
+
+
+	config_list = []
+	config_list = [config for config in server_list if "testmode" in config]
+
+
+	if len(config_list) is not 0:
+	   config_list= config_list[0]
+	   logfile = config_list['logfile']
+	   testmode = bool(config_list['testmode'])
+	   statusfile =    config_list['statusfile']
+
+	else:
+	   logfile = 'server_monitoring.log'
+	   statusfile =  'server_status.log'
+	   testmode = False
+	   print ("Logfile not specified using default %s" % logfile)
+
+
+	print("Logfile is %s" % logfile)
+	print ("status file is %s" % statusfile)
+
+	return server_list, logfile, statusfile,testmode
+
+
+
+def intialise_server_list():
+
+	server_list, logfile, statusfile,testmode  = setup_serverlist()
 
 	for server in server_list :
 		if 'logfile' not in server:

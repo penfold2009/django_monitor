@@ -7,16 +7,17 @@ app_name = 'serverapp'  ##https://docs.djangoproject.com/en/3.0/intro/tutorial03
 urlpatterns = [ ##path('', views.login_view, name='login_view'),
                 path('', views.all_details, name='all_details'),
 	            path('testpathfornoreason/', views.serverlist, name='viewname-serverlist'),
-	            path('base2', views.base2, name='viewname-base2'),
-	            path('new_entry', views.new_entry, name='viewname-new_entry'),
                 path('company_server/<str:company_name>/', views.company_server, name='server'),
 
                 path('company_servertable/<str:company_name>/', views.company_servertable, name='servertable'),
                 path('update_links/<str:server_name>/', views.test_links, name='test_links'),
 
                 re_path(r'^showlinks/(?P<company_name>.+)/(?P<server_name>.+)/$', views.list_links, name='links'), #https://docs.djangoproject.com/en/3.0/topics/http/urls/#using-regular-expressions
-                re_path(r'^get_linkparams2/(?P<company_name>.+)/(?P<server_name>[\w\s]+)/(?P<link_name>.+)/$', views.linkparameters2, name='linkparameters2'), #https://docs.djangoproject.com/en/3.0/topics/http/urls/#using-regular-expressions
+                re_path(r'^get_linkparams3/(?P<company_name>.+)/(?P<server_name>[\w\s]+)/(?P<link_name>.+)/$', views.linkparameters3, name='linkparameters3'), #https://docs.djangoproject.com/en/3.0/topics/http/urls/#using-regular-expressions
                 re_path(r'^get_linkparams/(?P<company_name>.+)/(?P<server_name>[\w\s]+)/(?P<link_name>.+)/$', views.linkparameters, name='linkparameters'), #https://docs.djangoproject.com/en/3.0/topics/http/urls/#using-regular-expressions
+                re_path(r'^base(?P<number>[0-9]+)/$', views.basex, name='basex'), #https://docs.djangoproject.com/en/3.0/topics/http/urls/#using-regular-expressions
+                re_path(r'^company_servertable(?P<number>[0-9]+)/(?P<company_name>.+)/$', views.company_servertablex, name='servertablex'),
+	            re_path(r'^new_entry_form(?P<number>[0-9]+)', views.new_entry_form, name='viewname-new_entry_form'),
                 # path('get_linkparams/', views.linkparameters, name='linkparameters'), #https://docs.djangoproject.com/en/3.0/topics/http/urls/#using-regular-expressions
 
 ]

@@ -258,14 +258,22 @@ class MIBParameter (models.Model):
                  self.mib_status  = self.current_status
                  self.transition_statetime = 0
                  self.statetimestart = time()
-                 self.save()
                  
                  if self.email :
                     if self.thresholdvalue:  return_string  = ("%s : %s threshold value of %s" % (self.name, self.mib_status, self.thresholdvalue))
                     else : return_string  = ("%s : %s" % (self.name, self.mib_status))
                  else : return_string = None
 
-             
+                 if self.name == 'Link Status':
+                   self.parent_link.status = self.current_status
+                   if self.current_status == 'up':
+                     self.parent_link.colour = 'black'
+                   else: self.parent_link.colour = 'grey'
+
+                 self.save()
+
+
+
               else : return_string = None
 
            else :

@@ -16,7 +16,7 @@ def test_links (request, server_name):
           server_obj = get_object_or_404(Server, name=server_name)
           # test_server_links(server_obj)
           Server.objects.get(name = server_name).test_all_links()
-          return HttpResponse(f"Updating links for {server_obj.name}")
+          return HttpResponse(f"Updating links for {server_obj.name} path is {request.path}")
 
 
 def serverlist(request):
@@ -35,22 +35,54 @@ def company_servertable(request, company_name):
     template = 'serverapp/servertable.html'
     return render(request, template, context)
 
+
+
+def company_servertablex(request, number, company_name):
+    company_obj = get_object_or_404(Company, name=company_name)
+    context = {'servers': company_obj.server_set.all(), 
+           'company_name': company_name , 
+           'company_obj':company_obj,
+           'companies': Company.objects.all(),
+           'basenumber': number
+           }
+
+    template = f'serverapp/servertable{number}.html'
+    return render(request, template, context)
+
     # return HttpResponse("You're looking at server %s." % company_obj.name)
 
 
+# @login_required
+# def base2(request):
+#       # company_obj = Company.objects.filter(name=company_name).first()
+#     #company_obj = Company.objects.get(name=company_name)
+#     context = {'companies': Company.objects.all()}
+
+#     template = 'serverapp/base2.html'
+#     return render(request, template,context)
+
 @login_required
-def base2(request):
+def basex(request, number):
       # company_obj = Company.objects.filter(name=company_name).first()
     #company_obj = Company.objects.get(name=company_name)
-    context = {'companies': Company.objects.all()}
+    context = {'companies': Company.objects.all(),
+              'varnumber': number}
 
-    template = 'serverapp/base2.html'
+    template = f'serverapp/base{number}.html'
     return render(request, template,context)
 
 
+
 @login_required
-def new_entry(request):
-  template='serverapp/form1.html'
+def new_entry_form(request,number):
+  template=f'serverapp/form{number}.html'
+
+  print ("### request.path : ",request.path)
+ 
+  # for attr in dir(request) :
+  #   if not '_' in attr:
+  #     print (f"request.{attr}  {getattr(request,attr)}")
+
   return render(request, template)
 
 
@@ -155,7 +187,7 @@ def linkparameters (request, company_name, server_name, link_name):
       return render(request, template, context)
 
 @login_required
-def linkparameters2 (request, company_name, server_name, link_name):
+def linkparameters3 (request, company_name, server_name, link_name):
       print ('### View is linkparameters2')
       print ('### Link name is %s' % link_name)
       print (f'### server name is {server_name}')
@@ -166,7 +198,7 @@ def linkparameters2 (request, company_name, server_name, link_name):
 
       response = HttpResponse()
       response.write("You clicked on %s. : %d " % (link_obj, link_obj.oid))
-      template = "serverapp/parameter_table.html"
+      template = "serverapp/parameter_table3.html"
       context = {'links': server_obj.serverlink_set.all(), 
                'company_name': company_name,
                'companies': Company.objects.all(),

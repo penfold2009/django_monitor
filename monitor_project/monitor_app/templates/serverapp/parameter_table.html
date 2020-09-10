@@ -1,0 +1,28 @@
+
+{% extends 'serverapp/servertable.html' %}
+
+{% block parameter_table %}
+
+  <div class="col-md-3">
+      <div class="col-md-3" style="position: fixed"> 
+         <label>{{ link_object.name }}</label>
+         <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+           <tbody>
+
+            {% for mibobj in link_object.mibparameter_set.all %}
+              <tr><td>{{ mibobj.name }}</td><td>{{ mibobj.mib_status }}</td></tr>
+            {% endfor %}
+
+           </tbody>
+          </table>
+      </div class="col-md-3"  style="position: fixed">
+    </div class="col-md-3">
+</div class="row">
+
+{% endblock parameter_table %}

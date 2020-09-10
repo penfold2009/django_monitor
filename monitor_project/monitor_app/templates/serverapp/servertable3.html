@@ -1,0 +1,78 @@
+{% extends 'serverapp/base3.html' %}
+
+{% block servertable %}
+
+    <div class="container-fluid">
+
+ <div class="row">
+    <!--   --> 
+
+
+
+
+  <div class="col-md-1">
+  </div class="col-md-1">
+  <div class="col-md-7">
+
+      {% for server in servers %}
+
+        <hr><br>
+         <h3 style ="display: inline"> {{ server.name }}</h3>
+
+         <!-- <button  style ="display: inline; position: absolute; right: 0" type="button" class="btn btn-light">Update</button> -->
+        
+          <button 
+            type="submit" 
+            class="btn btn-light btn-sm" 
+            style ="display: inline; position: absolute; right: 0"
+            value="Go" 
+            onclick="location.href='{% url 'serverapp:test_links' server.name %}'" 
+            name='mybtn2'>
+              Update
+          </button>
+        
+        
+        <table class="table table-hover">
+
+          <thead>
+            <tr>
+              <th>No.</th>
+              <th>Link  Name</th>
+              <th>Last Name</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for link in server.serverlink_set.all %}
+              <tr style=" color: {{ link.colour }};">
+                <th scope="row">{{ link.oid }}</a></th>
+                <td><a href="{% url 'serverapp:linkparameters3' company_obj.name server.name link.name %}" style="color: {{ link.colour }}">{{  link.name }}</a></td>
+                <td>{{ link.status }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+
+        </table>
+        <br><br>
+     
+      {% endfor %}
+
+   </div class="col-md-7">
+{% block parameter_table %}
+{% endblock parameter_table %}
+
+ </div class="row">
+</div class="container-fluid">
+
+{% endblock servertable %}
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function(event) { 
+            var scrollpos = localStorage.getItem('scrollpos');
+            if (scrollpos) window.scrollTo(0, scrollpos);
+        });
+
+        window.onbeforeunload = function(e) {
+            localStorage.setItem('scrollpos', window.scrollY);
+        };
+    </script>

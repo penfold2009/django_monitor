@@ -18,7 +18,7 @@ from datetime import timedelta
 import re
 from monitor_packages.snmp_functions import *
 from monitor_packages.functions import *
-from django.contrib.auth.models import User                                                                      
+from django.contrib.auth.models import User
 
 
 # managed1 = Server.objects.get(name="Managed_server1")

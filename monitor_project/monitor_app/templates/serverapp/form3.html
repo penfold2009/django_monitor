@@ -43,7 +43,8 @@
       }
     </style>
     <!-- Custom styles for this template -->
-    <link href="form-validation.css" rel="stylesheet">
+    <link href="{% static 'serverapp/form-validation.css' %}" rel="stylesheet">
+
   </head>
   <body class="bg-light">
     <div class="container">
@@ -54,10 +55,7 @@
        <img class="d-block mx-auto"  src="{% static 'serverapp/aritari-logo.png' %}" alt="Powered By Voipex" width="200" height="120">
      </a>
 
-    <p>
-     HttpRequest.path = {{HttpRequest.path}}
-
-    </p>  
+ 
     <h2>Checkout form</h2>
     <p class="lead">Below is an example form built entirely with Bootstrap’s form controls. Each required form group has a validation state that can be triggered by attempting to submit the form without completing it.</p>
   </div>
@@ -272,5 +270,9 @@
 </div>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
       <script>window.jQuery || document.write('<script src="https://getbootstrap.com/docs/4.5/assets/js/vendor/jquery.slim.min.js"><\/script>')</script><script src="https://getbootstrap.com/docs/4.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-LtrjvnR4Twt/qOuYxE721u19sVFLVSA4hf/rRt6PrZTmiPltdZcI7q7PXQBYTKyf" crossorigin="anonymous"></script>
-        <script src="form-validation.js"></script></body>
+        <script src="{% static 'serverapp/form-validation.js' %}"></script></body>
+
+
+<!-- href="{% static 'serverapp/form-validation.js' %} -->
+
 </html>
