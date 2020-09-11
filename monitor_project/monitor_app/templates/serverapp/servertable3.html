@@ -2,16 +2,7 @@
 
 {% block servertable %}
 
-    <div class="container-fluid">
 
- <div class="row">
-    <!--   --> 
-
-
-
-
-  <div class="col-md-1">
-  </div class="col-md-1">
   <div class="col-md-7">
 
       {% for server in servers %}
@@ -38,7 +29,7 @@
             <tr>
               <th>No.</th>
               <th>Link  Name</th>
-              <th>Last Name</th>
+              <th>Status</th>
             </tr>
           </thead>
 
@@ -61,18 +52,5 @@
 {% block parameter_table %}
 {% endblock parameter_table %}
 
- </div class="row">
-</div class="container-fluid">
-
 {% endblock servertable %}
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function(event) { 
-            var scrollpos = localStorage.getItem('scrollpos');
-            if (scrollpos) window.scrollTo(0, scrollpos);
-        });
-
-        window.onbeforeunload = function(e) {
-            localStorage.setItem('scrollpos', window.scrollY);
-        };
-    </script>

@@ -102,11 +102,11 @@
                   onclick="location.href='{% url 'login'%}?next={{request.path}}'"
                   name='mybtn2'>
                     
-                     <!-- Bootstrap icon  https://icons.getbootstrap.com/icons/box-arrow-right/# -->
-                    <svg width="2em" height="2em" viewBox="0 0 16 16" class="bi bi-box-arrow-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                      <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z"/>
-                      <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
-                    </svg>
+                     <!-- Bootstrap icon  https://icons.getbootstrap.com/icons/box-arrow-left/# -->
+                      <svg width="2em" height="2em" viewBox="0 0 16 16" class="bi bi-box-arrow-left" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M6 12.5a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v2a.5.5 0 0 1-1 0v-2A1.5 1.5 0 0 1 6.5 2h8A1.5 1.5 0 0 1 16 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-8A1.5 1.5 0 0 1 5 12.5v-2a.5.5 0 0 1 1 0v2z"/>
+                        <path fill-rule="evenodd" d="M.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L1.707 7.5H10.5a.5.5 0 0 1 0 1H1.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z"/>
+                      </svg>
                     {{ user.get_username|capfirst }} Login
                 </button></li>
 
@@ -122,12 +122,36 @@
 <!-- <div class="spinner-border text-secondary"></div> -->
 
 
-{% block servertable %}
-     <div class="container-fluid"> 
-         <h2>Aritari Server Monitor</h2>
-         <img src="{% static 'serverapp/aritari-logo.png' %}" alt="Powered By Voipex" height="100px">
-     </div>
-{% endblock servertable %}
+ <div class="container-fluid">
+   <div class="row">
+     <div class="col-md-1">
+     </div class="col-md-1">
+
+
+
+      {% block servertable %}
+         <div class="col-md-7">
+           <div class="container-fluid"> 
+               <h2>Aritari Server Monitor</h2>
+               <img src="{% static 'serverapp/aritari-logo.png' %}" alt="Powered By Voipex" height="100px">
+           </div>
+         <div class="col-md-7">
+      {% endblock servertable %}
+
+
+
+      {% block login_content %}
+      {% endblock login_content %}
+
+
+      {% block logout-content%}
+      {% endblock logout-content%}
+
+
+   </div class="row">
+ </div class="container-fluid">
+
+
 
 
 
