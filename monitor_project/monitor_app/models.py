@@ -45,6 +45,10 @@ class Server(models.Model):
     # def showtest(self):
     #     return self.teststring
 
+    def ip_list (self):
+      return ' : '.join([ ipobj.ip for ipobj in ServerIpAddress.objects.filter(server_id = self.id) ])
+
+
     def setuplinks(self, server_parameters):
         parameter = "vibePeerIndex"
         for ipobj in self.serveripaddress_set.all():
@@ -249,6 +253,14 @@ class MIBParameter (models.Model):
              else: self.current_status = "below"
 
 
+           if self.name == 'Link Status' and self.parent_link.status != self.current_status:
+                self.parent_link.status = self.current_status
+                if self.current_status == 'up':
+                   self.parent_link.colour = 'black'
+                else: self.parent_link.colour = 'grey'
+                self.parent_link.save()
+
+
            if str(self.current_status) != str(self.mib_status):
               self.transition_statetime = time() - self.statetimestart
               print (" '%s' link '%s' for server '%s' has changed state to '%s' ." % (self.name, self.parent_link.name , self.parent_link.server.name, self.current_status) )
@@ -264,17 +276,11 @@ class MIBParameter (models.Model):
                     else : return_string  = ("%s : %s" % (self.name, self.mib_status))
                  else : return_string = None
 
-                 if self.name == 'Link Status':
-                   self.parent_link.status = self.current_status
-                   if self.current_status == 'up':
-                     self.parent_link.colour = 'black'
-                   else: self.parent_link.colour = 'grey'
-
-                 self.save()
-
-
 
               else : return_string = None
+
+              print ("### Saving changes to db ###")
+              self.save()
 
            else :
                  self.transition_statetime = 0

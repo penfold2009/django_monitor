@@ -5,10 +5,16 @@
 
   <div class="col-md-7">
 
+       <script>
+      $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();   
+      });
+      </script>
+
       {% for server in servers %}
 
         <hr><br>
-         <h3 style ="display: inline"> {{ server.name }}</h3>
+         <h3 data-toggle="tooltip" title="{{ server.ip_list }}" style ="display: inline"> {{ server.name }}</h3>
 
          <!-- <button  style ="display: inline; position: absolute; right: 0" type="button" class="btn btn-light">Update</button> -->
         
@@ -16,12 +22,12 @@
             type="submit" 
             class="btn btn-light btn-sm" 
             style ="display: inline; position: absolute; right: 0"
-            value="Go" 
+            value= "{{ request.path }}"
             onclick="location.href='{% url 'serverapp:test_links' server.name %}'" 
             name='mybtn2'>
               Update
           </button>
-        
+          <!-- <input type="hidden" name="next" value="{{ request.path }}"> -->
         
         <table class="table table-hover">
 

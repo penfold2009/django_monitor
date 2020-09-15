@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Server, Company, ServerLink 
 # Create your views here.
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
@@ -12,18 +12,27 @@ from monitor_packages.functions import *
 
 
 
-def test_links (request, server_name):
+def test_links (request, number, server_name):
           server_obj = get_object_or_404(Server, name=server_name)
           # test_server_links(server_obj)
           Server.objects.get(name = server_name).test_all_links()
-          return HttpResponse(f"Updating links for {server_obj.name} path is {request.path}")
+ ##         return HttpResponse(f"Updating links for {server_obj.name} path is {request.path}")
+
+          context = {'companies': Company.objects.all(),
+                    'varnumber': number}
+
+          template = f'serverapp/base{number}.html'
+          return render(request, template,context)
+          # print (f"request.GET: {request.GET}")
+          # next = request.GET.get('mybtn2')
+          # print (f"## next: {next}")
+          # return HttpResponseRedirect(next)
 
 
 def serverlist(request):
     return HttpResponse("Hello, world. You're at the server list index.")
 
 @login_required
-
 def company_servertable(request, company_name):
     company_obj = get_object_or_404(Company, name=company_name)
     context = {'servers': company_obj.server_set.all(), 
@@ -36,14 +45,20 @@ def company_servertable(request, company_name):
     return render(request, template, context)
 
 
-
+@login_required
 def company_servertablex(request, number, company_name):
     company_obj = get_object_or_404(Company, name=company_name)
+    ipdict = {}
+    for server in company_obj.server_set.all():
+          ipdict[server.name] = []
+          [ ipdict[server.name].append(ipobj.ip) for ipobj in server.serveripaddress_set.all()]
+
     context = {'servers': company_obj.server_set.all(), 
            'company_name': company_name , 
            'company_obj':company_obj,
            'companies': Company.objects.all(),
-           'basenumber': number
+           'basenumber': number,
+           'ipdictionary': ipdict
            }
 
     template = f'serverapp/servertable{number}.html'
@@ -229,7 +244,7 @@ def login_view(request):
         login(request, user)
         # Redirect to a success page.
         context = {'companies': Company.objects.all()}
-        template = 'serverapp/all_details.html'
+        template = 'serverapp/base3.html'
         return render(request, template, context)
 
     else:
