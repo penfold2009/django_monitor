@@ -15,10 +15,25 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
 
         <!-- Bootstrap core CSS -->
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
 
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+    </style>
   </head>
 
-<body>
+<body class="bg-light">
 
 
 
@@ -69,7 +84,8 @@
   
 
       <ul class="nav navbar-nav navbar-right">
-        <li><a class="nav-link" href="{% url 'serverapp:viewname-new_entry_form' 3 %}">New Entry</a></li>
+        <li><a class="nav-link" href="{% url 'serverapp:viewname-new_entry_form' 3 %}">New OLD</a></li>
+        <li><a class="nav-link" href="{% url 'serverapp:get_name' %}">New Entry</a></li>
         
             <ul class="nav navbar-nav navbar-right">
               {% if user.is_authenticated %}
@@ -121,6 +137,10 @@
 
 <!-- <div class="spinner-border text-secondary"></div> -->
 
+      {% block form_test1 %}
+      {% endblock form_test1 %}
+
+
 
  <div class="container-fluid">
    <div class="row">
@@ -130,9 +150,10 @@
 
 
       {% block servertable %}
-         <div class="col-md-7">
+         <div class="py-5 text-center">
            <div class="container-fluid"> 
                <h2>Aritari Server Monitor</h2>
+               <hr>
                <img src="{% static 'serverapp/aritari-logo.png' %}" alt="Powered By Voipex" height="100px">
            </div>
          <div class="col-md-7">
@@ -146,6 +167,10 @@
 
       {% block logout-content%}
       {% endblock logout-content%}
+
+
+      {% block formreply %}
+      {% endblock formreply %}
 
 
    </div class="row">
@@ -177,5 +202,17 @@
 </script>
 
 </body>
+
+
+  <footer class="my-5 pt-5 text-muted text-center text-small">
+    <p class="mb-1">&copy; 2017-2020 Aritari</p>
+    <ul class="list-inline">
+      <li class="list-inline-item"><a href="#">Privacy</a></li>
+      <li class="list-inline-item"><a href="#">Terms</a></li>
+      <li class="list-inline-item"><a href="#">Support</a></li>
+    </ul>
+  </footer>
+
+
 
 </html>

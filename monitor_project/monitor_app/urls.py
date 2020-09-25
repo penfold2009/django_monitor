@@ -10,6 +10,10 @@ urlpatterns = [ ##path('', views.login_view, name='login_view'),
                 path('company_server/<str:company_name>/', views.company_server, name='server'),
                 path('company_servertable/<str:company_name>/', views.company_servertable, name='servertable'),
                 path('update_links/<str:server_name>/', views.test_links, {'number' : 3}, name='test_links'),
+                path('submitform/', views.form_process, name='form_process'),
+                path('form_reply/<str:servername>', views.form_reply, name='form_reply'),
+                path('form_test/', views.get_name, name='get_name'),
+                path('form_response/<str:form_data>', views.get_name, name='get_name'),
 
 
                 re_path(r'^showlinks/(?P<company_name>.+)/(?P<server_name>.+)/$', views.list_links, name='links'), #https://docs.djangoproject.com/en/3.0/topics/http/urls/#using-regular-expressions
@@ -17,8 +21,8 @@ urlpatterns = [ ##path('', views.login_view, name='login_view'),
                 re_path(r'^get_linkparams/(?P<company_name>.+)/(?P<server_name>[\w\s]+)/(?P<link_name>.+)/$', views.linkparameters, name='linkparameters'), #https://docs.djangoproject.com/en/3.0/topics/http/urls/#using-regular-expressions
                 re_path(r'^base(?P<number>[0-9]+)/$', views.basex, name='basex'), #https://docs.djangoproject.com/en/3.0/topics/http/urls/#using-regular-expressions
                 re_path(r'^company_servertable(?P<number>[0-9]+)/(?P<company_name>.+)/$', views.company_servertablex, name='servertablex'),
-	            re_path(r'^new_entry_form(?P<number>[0-9]+)', views.new_entry_form, name='viewname-new_entry_form'),
-                # path('get_linkparams/', views.linkparameters, name='linkparameters'), #https://docs.djangoproject.com/en/3.0/topics/http/urls/#using-regular-expressions
+                re_path(r'^new_entry_form(?P<number>[0-9]+)', views.new_entry_form, name='viewname-new_entry_form'),
+                path('get_linkparams/', views.linkparameters, name='linkparameters'), #https://docs.djangoproject.com/en/3.0/topics/http/urls/#using-regular-expressions
 ]
 
 

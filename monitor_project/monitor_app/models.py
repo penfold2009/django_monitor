@@ -45,7 +45,7 @@ class Server(models.Model):
     # def showtest(self):
     #     return self.teststring
 
-    def ip_list (self):
+    def ip_list (self): ## Get alist of ips that can be dusplayed when mousing over the server name.
       return ' : '.join([ ipobj.ip for ipobj in ServerIpAddress.objects.filter(server_id = self.id) ])
 
 

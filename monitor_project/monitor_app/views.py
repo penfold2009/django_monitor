@@ -5,10 +5,78 @@ from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
+from django.urls import reverse
 import shelve
 from monitor_packages.functions import *
 
+from .forms import NameForm
+
 # https://www.edureka.co/community/73109/how-do-i-call-a-django-function-on-button-click
+
+## https://docs.djangoproject.com/en/3.1/topics/forms/
+def get_name(request, form_data = None):
+
+    # if this is a POST request we need to process the form data
+    print ("########################### request.POST.items ##########################")
+    for key, val in request.POST.items():
+           print (f"get_name:  {key} : {val}")
+      
+    if 'form_response' in request.path:
+
+      print (f"request.path is {request.path}")
+      print (f"form_data = {form_data}")
+
+      print("################ request attributes ####################################")
+      for attr in dir(request) :
+        if not '_' in attr:
+           print (f"request.{attr}  {getattr(request,attr)}")
+
+        print ("Thanks very much")
+        return render(request, 'serverapp/form_reply.html', {'name': form_data})
+  
+
+
+    if request.method == 'POST':
+
+        print ("POST request.POST.items")
+
+
+        # create a form instance and populate it with data from the request:
+        form = NameForm(request.POST)
+        # check whether it's valid:
+        if form.is_valid():
+
+
+
+            server = form.cleaned_data['server_name']
+            company = form.cleaned_data['company_name']
+
+            # if Company.objects.filter(name = company):
+            if   Company.objects.filter(name = company).first().server_set.filter(name  = server):
+                   error =  (f" {server} already exists for {company}" )
+                   print (error)
+                   return render(request, 'serverapp/form_test1.html', {'form': form, 'error': error})
+
+
+            # print ("################## form attributes #####################################")
+            # for attr in dir(form):
+            #      print (f"{attr}: {getattr(form, attr)}")
+            # process the data in form.cleaned_data as required...
+            # redirect to a new URL:
+
+            print ("--------------Redirecting ------")
+            ## return HttpResponseRedirect('/thanks/')
+            return HttpResponseRedirect(reverse('serverapp:get_name', args=(form.cleaned_data['company_name'],)  ) )
+
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        form = NameForm()
+
+    return render(request, 'serverapp/form_test1.html', {'form': form})
+
+
+
+
 
 
 
@@ -62,7 +130,7 @@ def company_servertablex(request, number, company_name):
            }
 
     template = f'serverapp/servertable{number}.html'
-    return render(request, template, context)
+    return  render(request, template, context)
 
     # return HttpResponse("You're looking at server %s." % company_obj.name)
 
@@ -88,6 +156,8 @@ def basex(request, number):
 
 
 
+########## Form bits #################################
+
 @login_required
 def new_entry_form(request,number):
   template=f'serverapp/form{number}.html'
@@ -101,7 +171,41 @@ def new_entry_form(request,number):
   return render(request, template)
 
 
-## Not used###################################################
+
+
+def form_process (request):
+  print ("Processing form")
+  server_name = request.POST['server']
+  community_string = request.POST['community']
+
+  for key, val in request.POST.items():
+       print (f"form_process:  {key} : {val}")
+
+  #return HttpResponse(f"Response from form. server name is {server_name}\n community string is {community_string}")
+#
+  # return HttpResponseRedirect('/form_reply/', {'server':server_name})
+  return HttpResponseRedirect(reverse('serverapp:form_reply', args=(server_name,)  ) )
+
+  # return redirect(request, 'serverapp/form_reply.html' )
+
+def form_reply (request, servername):
+
+      for attr in dir(request):
+         if attr != 'environ':
+          print (f"{attr}: {getattr(request, attr)}")
+
+ #     for key, val in request.POST.items():
+ #      print (f"{key} : {val}")
+      context = {'companies': Company.objects.all(),
+                  'server' : servername}
+      return render(request, 'serverapp/form_reply.html', context)
+
+
+##############################################################################
+
+
+
+## Not used   ###################################################
 def company_old(request, company_id):
 
     linklist = []
@@ -136,7 +240,7 @@ def all_details(request):
        context = {'companies': Company.objects.all()}
        template = 'serverapp/all_details.html'
        return render(request, template, context)
-   ##    return redirect ('/company_server/Optainium/')
+      # return redirect ('/company_server/Optainium/')
     else :
       return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     
