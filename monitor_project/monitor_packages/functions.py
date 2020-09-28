@@ -4,7 +4,7 @@ import re
 import ezgmail  ### ensure token.json  token.pickle exist in the running dir
 from pathlib import Path
 import json
-
+from django.forms import GenericIPAddressField
 
 def ping(server):
 
@@ -113,9 +113,15 @@ def add_server_to_db (server):
 				return ("Error no ip addresses specified")
 				
 			else :
-				for ip in server['ipaddress']:
-					ip = ServerIpAddress(ip=ip, server=db_server)
-					ip.save()
+				iplist = str(server['ipaddress']).split(',')
+				ipvalue = GenericIPAddressField(protocol='ipv4')
+				for ip in iplist:
+					print(ip)
+					try : 
+						ipvalue.clean(ip)
+						ip = ServerIpAddress(ip=ip, server=db_server)
+						ip.save()
+					except Exception as err: print (f" IP check for {ip} : {err}")
 
 			db_server.setuplinks(server)
 			return (f"Set up links for {server['name']}")
