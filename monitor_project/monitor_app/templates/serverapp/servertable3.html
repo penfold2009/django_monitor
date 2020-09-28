@@ -20,13 +20,25 @@
         
           <button 
             type="submit" 
-            class="btn btn-light btn-sm" 
+            class="btn btn-light btn-md" 
             style ="display: inline; position: absolute; right: 0"
             value= "{{ request.path }}"
             onclick="location.href='{% url 'serverapp:test_links' server.name %}'" 
             name='mybtn2'>
               Update
           </button>
+
+          <button 
+            type="submit" 
+            class="btn btn-light btn-md" 
+            style ="display: inline; position: relative;right:0"
+            value= "{{ request.path }}"
+            onclick="location.href='{% url 'serverapp:delete_server' server.name %}'" 
+            name='deletebtn'>
+              Delete
+          </button>
+
+
           <!-- <input type="hidden" name="next" value="{{ request.path }}"> -->
         
         <table class="table table-hover">

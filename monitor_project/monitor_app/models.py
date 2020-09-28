@@ -56,7 +56,7 @@ class Server(models.Model):
          try : mywalk = SNMPWalk(parameter,ipobj.ip.strip(),self.snmp_community)
          
          except: 
-              print ("SNMPWalk ('%s','%s','%s')" % (parameter,ipobj.ip,self.community))
+              print ("SNMPWalk ('%s','%s','%s')" % (parameter,ipobj.ip,self.snmp_community))
               print ("Error: Check that parameters are correct")
          else:
            if len(mywalk) == 1 and "No SNMP response" in mywalk[0][0]: 

@@ -14,13 +14,9 @@ from .forms import NameForm
 # https://www.edureka.co/community/73109/how-do-i-call-a-django-function-on-button-click
 
 ## https://docs.djangoproject.com/en/3.1/topics/forms/
-def get_name(request, form_data = None):
+def get_name(request, form_data = None ,  report = None):
 
-    # if this is a POST request we need to process the form data
-    print ("########################### request.POST.items ##########################")
-    for key, val in request.POST.items():
-           print (f"get_name:  {key} : {val}")
-      
+
     if 'form_response' in request.path:
 
       print (f"request.path is {request.path}")
@@ -32,12 +28,15 @@ def get_name(request, form_data = None):
            print (f"request.{attr}  {getattr(request,attr)}")
 
         print ("Thanks very much")
-        return render(request, 'serverapp/form_reply.html', {'name': form_data})
+        return render(request, 'serverapp/form_reply.html', {'name': form_data , 'report' : report})
   
-
-
     if request.method == 'POST':
 
+        # if this is a POST request we need to process the form data
+        print ("########################### request.POST.items ##########################")
+        for key, val in request.POST.items():
+               print (f"get_name:  {key} : {val}")
+          
         print ("POST request.POST.items")
 
 
@@ -45,31 +44,37 @@ def get_name(request, form_data = None):
         form = NameForm(request.POST)
         # check whether it's valid:
         if form.is_valid():
+            print ("Form is valid")
 
 
-
-            server = form.cleaned_data['server_name']
-            company = form.cleaned_data['company_name']
-
+            server = form.cleaned_data['name']
+            company = form.cleaned_data['company']
+            print (f"ip address : {form.cleaned_data['ipaddress']}")
             # if Company.objects.filter(name = company):
-            if   Company.objects.filter(name = company).first().server_set.filter(name  = server):
+            if   Company.objects.filter(name = company):
+                if Company.objects.get(name = company).server_set.filter(name  = server):
                    error =  (f" {server} already exists for {company}" )
                    print (error)
                    return render(request, 'serverapp/form_test1.html', {'form': form, 'error': error})
+            
+            report = add_server_to_db (form.cleaned_data)
+            print (report)
 
-
-            # print ("################## form attributes #####################################")
-            # for attr in dir(form):
-            #      print (f"{attr}: {getattr(form, attr)}")
-            # process the data in form.cleaned_data as required...
-            # redirect to a new URL:
 
             print ("--------------Redirecting ------")
             ## return HttpResponseRedirect('/thanks/')
-            return HttpResponseRedirect(reverse('serverapp:get_name', args=(form.cleaned_data['company_name'],)  ) )
+
+            print ("   Cleaned data : ")
+            for key,data in form.cleaned_data.items():
+              print (f"    {key} : {data}")
+
+              
+            return HttpResponseRedirect(reverse('serverapp:get_name', args=(form.cleaned_data['company'], report)  ) )
 
     # if a GET (or any other method) we'll create a blank form
     else:
+
+        print ("blank form")
         form = NameForm()
 
     return render(request, 'serverapp/form_test1.html', {'form': form})
@@ -77,13 +82,21 @@ def get_name(request, form_data = None):
 
 
 
+def delete_server (request, number, server_name):
+    server_obj = get_object_or_404(Server, name=server_name)
+    server_obj.delete()
 
+    context = {'companies': Company.objects.all(), 'varnumber': number}
+    template = f'serverapp/base{number}.html'
+    return render(request, template,context)
 
 
 def test_links (request, number, server_name):
           server_obj = get_object_or_404(Server, name=server_name)
+          server_obj.test_all_links()
+
           # test_server_links(server_obj)
-          Server.objects.get(name = server_name).test_all_links()
+          #Server.objects.get(name = server_name).test_all_links()
  ##         return HttpResponse(f"Updating links for {server_obj.name} path is {request.path}")
 
           context = {'companies': Company.objects.all(),

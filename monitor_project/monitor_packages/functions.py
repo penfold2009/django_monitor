@@ -77,50 +77,102 @@ def setup_serverlist( serverfile = 'servers-aritari.json'):
 
 
 
+
+def add_server_to_db (server):
+			print ("function: add_server_to_db") 
+	# if Company.objects.all().filter(name = server['company']):
+			if Company.objects.filter(name = server['company']):
+				db_company = Company.objects.get(name = server['company'])
+				print (db_company.name, " exists")
+			else : 
+				db_company = Company(name = server['company'])
+				db_company.save()
+
+			print ("#### Check Servers ### ")
+			# if Server.objects.filter(name = server['name']):
+			#if Server.objects.filter(name = server['name']):
+			if Server.objects.filter(name = server['name']):
+				if Server.objects.get(name = server['name']).company.name == server['company']:
+					return ("Server '%s' already exists for %s" % (server['name'], server['company']))
+
+			else:
+				db_server = Server( name = server['name'], 
+								online= "True", 
+								snmp_community = server['community'], 
+								email_list = server['emaillist']
+			)
+
+			db_server.save()
+			#print(db_company.name)
+			print("Adding %s to %s" % (db_server,db_company))
+			db_company.server_set.add(db_server)
+			db_company.save()
+
+            ## ip addresses
+			if 'ipaddress' not in server.keys():
+				return ("Error no ip addresses specified")
+				
+			else :
+				for ip in server['ipaddress']:
+					ip = ServerIpAddress(ip=ip, server=db_server)
+					ip.save()
+
+			db_server.setuplinks(server)
+			return (f"Set up links for {server['name']}")
+			# for link in db_server.serverlink_set.all():
+			# 	print ("Link is ", link)
+
+
+
+
+
 def intialise_server_list():
 
 	server_list, logfile, statusfile,testmode  = setup_serverlist()
 
 	for server in server_list :
 		if 'logfile' not in server:
-			
-			if Company.objects.all().filter(name = server['company']):
-				db_company = Company.objects.all().get(name = server['company'])
-				print (db_company.name, " exists")
-			else : 
-				db_company = Company(name = server['company'])
-				db_company.save()
+			add_server_to_db (server)
 
-			if Server.objects.filter(name = server['name']):
-				print ("Server '%s' already exists for %s" % (server['name'], server['company']))
-			else:
-				db_server = Server( name = server['name'], 
-					                online= "True", 
-					                snmp_community = server['community'], 
-                                    email_list = server['emaillist']
-					        )
+			# # if Company.objects.all().filter(name = server['company']):
+			# if Company.objects.get(name = server['company']):
+			# 	db_company = Company.objects.get(name = server['company'])
+			# 	print (db_company.name, " exists")
+			# else : 
+			# 	db_company = Company(name = server['company'])
+			# 	db_company.save()
 
-				db_server.save()
+			# # if Server.objects.filter(name = server['name']):
+			# if Server.objects.get(name = server['name']):
+			# 	print ("Server '%s' already exists for %s" % (server['name'], server['company']))
+			# else:
+			# 	db_server = Server( name = server['name'], 
+			# 		                online= "True", 
+			# 		                snmp_community = server['community'], 
+   #                                  email_list = server['emaillist']
+			# 		        )
 
-				print(db_company.name)
-				print("Adding %s to %s" % (db_server,db_company))
-				db_company.server_set.add(db_server)
-				db_company.save()
+			# 	db_server.save()
 
-	            ## ip addresses
-				if 'ipaddress' not in server.keys():
-					print ("Error no ip addresses specified")
-					continue
+			# 	#print(db_company.name)
+			# 	print("Adding %s to %s" % (db_server,db_company))
+			# 	db_company.server_set.add(db_server)
+			# 	db_company.save()
 
-				else :
-					for ip in server['ipaddress']:
-						ip = ServerIpAddress(ip=ip, server=db_server)
-						ip.save()
+	  #           ## ip addresses
+			# 	if 'ipaddress' not in server.keys():
+			# 		print ("Error no ip addresses specified")
+			# 		continue
 
-				db_server.setuplinks(server)
+			# 	else :
+			# 		for ip in server['ipaddress']:
+			# 			ip = ServerIpAddress(ip=ip, server=db_server)
+			# 			ip.save()
 
-				# for link in db_server.serverlink_set.all():
-				# 	print ("Link is ", link)
+			# 	db_server.setuplinks(server)
+
+			# 	# for link in db_server.serverlink_set.all():
+			# 	# 	print ("Link is ", link)
 					
 
 
