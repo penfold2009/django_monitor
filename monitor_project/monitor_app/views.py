@@ -10,10 +10,36 @@ import shelve
 from monitor_packages.functions import *
 
 from .forms import NameForm
+from .forms import *
 
 # https://www.edureka.co/community/73109/how-do-i-call-a-django-function-on-button-click
 
 ## https://docs.djangoproject.com/en/3.1/topics/forms/
+
+
+def check_forms_are_valid(form_list):
+
+  for Paramform in form_list:
+    if not Paramform.is_valid():
+      print (f"{Paramform.name} is not valid.")
+      return False
+
+  return True
+
+
+def parameter_form(name, mib, use_threshold = False, postdata = None):
+
+    idstring = name.replace(" ","")
+    auto_id = (f"{idstring}_%s")
+    form = Parameter(data = postdata , auto_id = auto_id)
+    form.name = name
+    form.mib_parameter = mib
+    form.use_threshold = use_threshold
+    if not use_threshold:
+      form.fields['threshold'].disabled = True
+    return form
+
+
 def get_name(request, form_data = None ,  report = None):
 
 
@@ -35,16 +61,29 @@ def get_name(request, form_data = None ,  report = None):
         # if this is a POST request we need to process the form data
         print ("########################### request.POST.items ##########################")
         for key, val in request.POST.items():
-               print (f"get_name:  {key} : {val}")
+               print (f"request.POST[{key}] = {val}")
           
         print ("POST request.POST.items")
 
 
         # create a form instance and populate it with data from the request:
-        form = NameForm(request.POST)
+        form = NameForm(data = request.POST)
+        paramform_list = []
+        paramform_list.append(parameter_form('TunnelStatus', 'vibeTunnelStatus', False, request.POST))
+        paramform_list.append(parameter_form('Link Quality', 'vibeRemoteQuality', True, request.POST))
+
+
         # check whether it's valid:
-        if form.is_valid():
+        if form.is_valid() and check_forms_are_valid(paramform_list):
+        #if form.is_valid():
             print ("Form is valid")
+
+            # if this is a POST request we need to process the form data
+            print ("########################### request.POST.items valid ##########################")
+            for key, val in request.POST.items():
+                   print (f"request.POST[{key}] = {val}")
+              
+            print ("POST request.POST.items")
 
 
             server = form.cleaned_data['name']
@@ -55,10 +94,11 @@ def get_name(request, form_data = None ,  report = None):
                 if Company.objects.get(name = company).server_set.filter(name  = server):
                    error =  (f" {server} already exists for {company}" )
                    print (error)
-                   return render(request, 'serverapp/form_test1.html', {'form': form, 'error': error})
+                   return render(request, 'serverapp/form_test1.html', {'form': form, 'form_list' : paramform_list ,'error': error})
             
-            report = add_server_to_db (form.cleaned_data)
-            print (report)
+      #      report = add_server_to_db (form.cleaned_data)
+      #      print (report)
+
 
 
             print ("--------------Redirecting ------")
@@ -68,16 +108,31 @@ def get_name(request, form_data = None ,  report = None):
             for key,data in form.cleaned_data.items():
               print (f"    {key} : {data}")
 
-              
+            print ("--------")
+            print ("   Cleaned data for paramform_list : ")
+            for paramform in paramform_list:
+                  print (f" {paramform.name} : ")
+                  for key,data in paramform.cleaned_data.items():
+                       print (f"    {key} : {data}")
+
+
+
             return HttpResponseRedirect(reverse('serverapp:get_name', args=(form.cleaned_data['company'], report)  ) )
 
     # if a GET (or any other method) we'll create a blank form
     else:
 
+
+
         print ("blank form")
         form = NameForm()
 
-    return render(request, 'serverapp/form_test1.html', {'form': form})
+        paramform_list = []
+        paramform_list.append(parameter_form('TunnelStatus', 'vibeTunnelStatus'))
+        paramform_list.append(parameter_form('Link Quality', 'vibeRemoteQuality', True))
+
+
+    return render(request, 'serverapp/form_test1.html', {'form': form, 'form_list' : paramform_list })
 
 
 
