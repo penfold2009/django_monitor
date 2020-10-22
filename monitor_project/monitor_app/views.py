@@ -29,14 +29,12 @@ def check_forms_are_valid(form_list):
 
 def parameter_form(name, mib, use_threshold = False, postdata = None):
 
-    idstring = name.replace(" ","")
-    auto_id = (f"{idstring}_%s")
-    form = Parameter(data = postdata , auto_id = auto_id)
+    form = Parameter_dynamic(data = postdata ,  param = name)
     form.name = name
     form.mib_parameter = mib
     form.use_threshold = use_threshold
     if not use_threshold:
-      form.fields['threshold'].disabled = True
+      form.fields[f'{name}_threshold'].disabled = True
     return form
 
 
@@ -83,26 +81,8 @@ def get_name(request, form_data = None ,  report = None):
             for key, val in request.POST.items():
                    print (f"request.POST[{key}] = {val}")
               
-            print ("POST request.POST.items")
+#            print ("POST request.POST.items")
 
-
-            server = form.cleaned_data['name']
-            company = form.cleaned_data['company']
-            print (f"ip address : {form.cleaned_data['ipaddress']}")
-            # if Company.objects.filter(name = company):
-            if   Company.objects.filter(name = company):
-                if Company.objects.get(name = company).server_set.filter(name  = server):
-                   error =  (f" {server} already exists for {company}" )
-                   print (error)
-                   return render(request, 'serverapp/form_test1.html', {'form': form, 'form_list' : paramform_list ,'error': error})
-            
-      #      report = add_server_to_db (form.cleaned_data)
-      #      print (report)
-
-
-
-            print ("--------------Redirecting ------")
-            ## return HttpResponseRedirect('/thanks/')
 
             print ("   Cleaned data : ")
             for key,data in form.cleaned_data.items():
@@ -117,6 +97,28 @@ def get_name(request, form_data = None ,  report = None):
 
 
 
+            server = form.cleaned_data['name']
+            company = form.cleaned_data['company']
+            print (f"ip address : {form.cleaned_data['ipaddress']}")
+            # if Company.objects.filter(name = company):
+            if   Company.objects.filter(name = company):
+                if Company.objects.get(name = company).server_set.filter(name  = server):
+                   error =  (f" {server} already exists for {company}" )
+                   print (error)
+                   return render(request, 'serverapp/form_test1.html', {'form': form, 'form_list' : paramform_list ,'error': error})
+            
+            report = add_server_to_db (form.cleaned_data)
+            print (report)
+
+
+
+            print ("--------------Redirecting ------")
+            ## return HttpResponseRedirect('/thanks/')
+
+
+
+            ### When redirecting to another view instead of an html tmeplate can use the 'reverse' function ##
+            ### https://docs.djangoproject.com/en/3.1/intro/tutorial04/#write-a-minimal-form
             return HttpResponseRedirect(reverse('serverapp:get_name', args=(form.cleaned_data['company'], report)  ) )
 
     # if a GET (or any other method) we'll create a blank form

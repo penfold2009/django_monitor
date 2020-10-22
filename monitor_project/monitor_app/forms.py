@@ -9,6 +9,7 @@ class NameForm(forms.Form):
                widget= forms.TextInput(attrs={'class':'form-control'}))
 
     emaillist = forms.EmailField(label='email@address', initial = 'colin.penfound@aritari.com',
+               help_text='A valid email address, please.',
                widget= forms.EmailInput(attrs={'class':'form-control'}))
 
     ipaddress = forms.CharField(label='IP Adress', initial = '88.150.165.135', max_length=200,
@@ -23,13 +24,22 @@ class NameForm(forms.Form):
                widget= forms.CheckboxInput(attrs={ 'onclick': "showparameterform()", } ) )
 
 
+## Dynamicly created form ##
+## https://jacobian.org/2010/feb/28/dynamic-form-generation/
+## Need to do this to dynamically define the 'name' of the inpout fields
+class Parameter_dynamic (forms.Form):
+    def __init__(self, *args, **kwargs):
+        ## pull out the parameter names from the kwargs list
+        param = kwargs.pop('param')
 
-class Parameter (forms.Form):
+        ## Nowe initialise the main form class
+        super(Parameter_dynamic,self).__init__(*args, **kwargs)
+        self.fields[f'{param}_threshold'] = forms.IntegerField(label = 'Threshold Value', initial = 50)
+        self.fields[f'{param}_enable'] = forms.BooleanField(label='Enable', initial = True, required = False)
+        self.fields[f'{param}_email']  = forms.BooleanField(label='Email', initial = True,   required = False)
 
-     threshold = forms.IntegerField(label = 'Threshold Value', initial = 50)
-     enable = forms.BooleanField(label='Enable', initial = True, required = False)
-     email  = forms.BooleanField(label='Email', initial = True,   required = False)
 
+### Not used ###
 
 class Quality (forms.Form):
         test = forms.CharField(label='Link Quality',  initial = 'Quality',max_length=100)
@@ -43,17 +53,3 @@ class CommentForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['name'].widget.attrs.update({'class': 'special'})
         self.fields['comment'].widget.attrs.update(size='40')
-
-### Form created form server classss
-### https://docs.djangoproject.com/en/3.1/topics/forms/modelforms/#modelforms-overriding-default-fields
-# from .models import Server
-# from django.forms import ModelForm
-
-# class NewServer(ModelForm):
-
-#      class Meta:
-
-#           server_name = forms.CharField(label='Server name', max_length=100)
-#           server_name = forms.CharField(label='Server name', max_length=100)
-
-
