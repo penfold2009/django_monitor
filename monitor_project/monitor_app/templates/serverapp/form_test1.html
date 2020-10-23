@@ -1,0 +1,135 @@
+{% extends 'serverapp/base3.html' %}
+{% load static %}  <!-- https://docs.djangoproject.com/en/3.0/ref/templates/builtins/#std:templatetag-static -->
+
+
+{% block form_test1 %}
+
+<script>
+function showparameterform() {
+   paramform = document.getElementById('parameterform')
+   if ( paramform.style.display == "none" ) {
+       paramform.style.display  = 'block'
+   }
+   else {
+       paramform.style.display  = 'none'
+   }
+
+}
+</script>
+
+
+    <div class="container">
+  <div class="py-5 text-center">
+    <!-- <img class="d-block mx-auto mb-4" src="https://getbootstrap.com/docs/4.5/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72"> -->
+     <a href="{% url 'serverapp:basex' 3 %}">
+       <img class="d-block mx-auto"  src="{% static 'serverapp/aritari-logo.png' %}" alt="Powered By Voipex" width="200" height="120">
+     </a>
+    <h2>New Server form</h2>
+    <p class="lead">{{error}}</p>
+  </div>
+
+  <div class="row">
+
+ </div>
+
+
+<div class="col-md-8 order-md-1 ">
+  <h4 class="mb-3">Server Details</h4>
+
+
+
+
+  <form action="{% url 'serverapp:get_name' %}" method="post">
+<!-- <form action="/form_test/" method="post"> -->
+
+
+    {% csrf_token %}
+	{% for field in form %}
+
+		  {% if field.label == 'Ping Test' %}
+		     <hr class="mb-4">
+		     <h5><label for="address">Select Tests</label></h5>
+
+		  {% endif %}
+	       <div class="row">
+	            <div class="col-md-10 md-3">
+	               {{ field.errors }}
+			        {{ field.label_tag }} {% if field.field.widget.input_type != 'checkbox' %} <br>  {% endif %}
+
+			        {{ field }}
+			        {% if field.help_text %}
+			           <p class="help">{{ field.help_text|safe }}</p>
+			        {% endif %}
+			    </div>
+			</div>
+		           {% if field.field.widget.input_type != 'checkbox' %} <br>  {% endif %}
+
+	{% endfor %}
+
+
+    <div id="parameterform">
+      {% for param_form in form_list %}
+       <hr>
+       <h5 class="mb-3">{{param_form.name}}</h5>
+
+          <div style  = "margin-left: 20px">
+			{% for field in param_form %}
+
+
+				  {% if field.name == 'threshold' %}
+					      {% if param_form.use_threshold == True %}
+					       <div class="row">
+					            <div class="col-md-10 md-3">
+					               {{ field.errors }}
+							        {{ field.label_tag }}
+							        {{ field }}
+							        {% if field.help_text %}
+							           <p class="help">{{ field.help_text|safe }}</p>
+							        {% endif %}
+							    </div>
+							</div>
+		  				   {%  endif  %}
+	  			  {%  else %}
+
+				       <div class="row">
+				            <div class="col-md-10 md-3">
+				               {{ field.errors }}
+						        {{ field.label_tag }}
+
+						        {{ field }}
+						        {% if field.help_text %}
+						           <p class="help">{{ field.help_text|safe }}</p>
+						        {% endif %}
+						    </div>
+						</div>
+				  {%  endif  %}
+			{% endfor %}
+
+
+
+
+
+		</div style  = "margin-left: 20px">
+
+	   {% endfor %}
+     </div id="parameterform">
+     <br>
+	 <hr class="mb-4">
+
+    <input type="submit" value="Submit">
+</form>
+
+</div>
+
+<!-- https://stackoverflow.com/questions/23298394/set-name-attribute-in-django-generated-select-field
+<script type="text/javascript">
+$(document).ready(function(){ 
+document.getElementById('id_player').name = 'to_player';
+});
+</script>
+ -->
+ 
+{% endblock form_test1 %}
+
+{% block servertable %}
+{% endblock servertable %}

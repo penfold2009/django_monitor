@@ -29,7 +29,7 @@ def check_forms_are_valid(form_list):
 
 def parameter_form(name, mib, use_threshold = False, postdata = None):
 
-    form = Parameter_dynamic(data = postdata ,  param = name)
+    form = Parameter_dynamic(data = postdata ,  param = name, mib = mib)
     form.name = name
     form.mib_parameter = mib
     form.use_threshold = use_threshold
@@ -90,13 +90,17 @@ def get_name(request, form_data = None ,  report = None):
 
             print ("--------")
             print ("   Cleaned data for paramform_list : ")
+            parameterdict = {}
             for paramform in paramform_list:
-                  print (f" {paramform.name} : ")
-                  for key,data in paramform.cleaned_data.items():
-                       print (f"    {key} : {data}")
 
+                  if paramform.cleaned_data.get(paramform.name + '_enable') :
+                    print (f'{paramform.name} is enabled')
+                    parameterdict[paramform.name] = {key.split('_')[1]:item for key,item in paramform.cleaned_data.items()}
+                    parameterdict[paramform.name]['name'] = paramform.name
+                    parameterdict[paramform.name]['mib_parameter'] = paramform.mib_parameter
 
-
+            form.cleaned_data['parameterlist'] = parameterdict
+            print (f"form.cleaned_data is now {form.cleaned_data}")
             server = form.cleaned_data['name']
             company = form.cleaned_data['company']
             print (f"ip address : {form.cleaned_data['ipaddress']}")

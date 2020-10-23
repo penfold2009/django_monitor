@@ -31,12 +31,27 @@ class Parameter_dynamic (forms.Form):
     def __init__(self, *args, **kwargs):
         ## pull out the parameter names from the kwargs list
         param = kwargs.pop('param')
+        mib = kwargs.pop('mib')
 
-        ## Nowe initialise the main form class
+        ## Now initialise the main form class
         super(Parameter_dynamic,self).__init__(*args, **kwargs)
         self.fields[f'{param}_threshold'] = forms.IntegerField(label = 'Threshold Value', initial = 50)
         self.fields[f'{param}_enable'] = forms.BooleanField(label='Enable', initial = True, required = False)
         self.fields[f'{param}_email']  = forms.BooleanField(label='Email', initial = True,   required = False)
+        # self.fields[f'{param}_mib']  = forms.CharField(label='', initial = mib, required = False,
+        #                                                 widget = forms.HiddenInput() )
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ### Not used ###
