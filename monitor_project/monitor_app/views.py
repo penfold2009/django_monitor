@@ -155,23 +155,13 @@ def confirm_request (request, name, action):
 
   print (f'name {name}')
   print (f'action {action}')
-  print (request)
+  print ("request.GET: ", request.GET)
 
   template = 'serverapp/confirm_action.html'
   action2 = f'{action} {name}'
   context = {'action': action, 'name' : name}
 
-  # if 'Delete' in action:
-  #   print (f'Deleting {name}')
-  #   server_obj = get_object_or_404(Server, name = name)
-  #   server_obj.delete()
-
   return render(request, template, context)
-
-
-
-
-
 
 
 
@@ -196,22 +186,17 @@ def test_links (request, number, server_name):
                       'action' : f'{server_name} Updated',
                     'varnumber': number}
 
-          template = f'serverapp/base{number}.html'
+          template = f'serverapp/base.html'
           return render(request, template,context)
           # print (f"request.GET: {request.GET}")
           # next = request.GET.get('mybtn2')
           # print (f"## next: {next}")
           # return HttpResponseRedirect(next)
 
-
-def serverlist(request):
-    return HttpResponse("Hello, world. You're at the server list index.")
-
-
-
 @login_required
 def company_servertable(request, company_name):
     company_obj = get_object_or_404(Company, name=company_name)
+    print ("request.path:" , request.path )
     ipdict = {}
     for server in company_obj.server_set.all():
           ipdict[server.name] = []
