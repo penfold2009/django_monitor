@@ -38,7 +38,7 @@ def parameter_form(name, mib, use_threshold = False, postdata = None):
     return form
 
 
-def get_name(request, form_data = None ,  report = None):
+def server_form(request, form_data = None ,  report = None):
 
 
     if 'form_response' in request.path:
@@ -109,7 +109,7 @@ def get_name(request, form_data = None ,  report = None):
                 if Company.objects.get(name = company).server_set.filter(name  = server):
                    error =  (f" {server} already exists for {company}" )
                    print (error)
-                   return render(request, 'serverapp/form_test1.html', {'form': form, 'form_list' : paramform_list ,'error': error})
+                   return render(request, 'serverapp/server_form.html', {'form': form, 'form_list' : paramform_list ,'error': error})
             
             report = add_server_to_db (form.cleaned_data)
             print (report)
@@ -125,11 +125,11 @@ def get_name(request, form_data = None ,  report = None):
             ### https://docs.djangoproject.com/en/3.1/intro/tutorial04/#write-a-minimal-form
             ### the url created will be something like :-
             ### http://127.0.0.1:8000/form_response/Aritari/Set%20up%20links%20for%20Office%20Rapid%20server2
-            ### In urls.py this matches the url sting "path('form_response/<str:form_data>/<str:report>', views.get_name, name='get_name'),"
-            ### and so will load the view get_name.
-            ### notice there is another url for getname " path('form_test/', views.get_name, name='get_name'), "
+            ### In urls.py this matches the url sting "path('form_response/<str:form_data>/<str:report>', views.server_form, name='server_form'),"
+            ### and so will load the view server_form.
+            ### notice there is another url for getname " path('form_test/', views.server_form, name='server_form'), "
             ### but the string format does not match so it will not be used.
-            return HttpResponseRedirect(reverse('serverapp:get_name', args=(form.cleaned_data['company'], report)  ) )
+            return HttpResponseRedirect(reverse('serverapp:server_form', args=(form.cleaned_data['company'], report)  ) )
 
     # if a GET (or any other method) we'll create a blank form
     else:
@@ -144,7 +144,7 @@ def get_name(request, form_data = None ,  report = None):
         paramform_list.append(parameter_form('Link Quality', 'vibeRemoteQuality', True))
 
 
-    return render(request, 'serverapp/form_test1.html', {'form': form, 'form_list' : paramform_list })
+    return render(request, 'serverapp/server_form.html', {'form': form, 'form_list' : paramform_list })
 
 
 
@@ -207,21 +207,10 @@ def test_links (request, number, server_name):
 def serverlist(request):
     return HttpResponse("Hello, world. You're at the server list index.")
 
+
+
 @login_required
 def company_servertable(request, company_name):
-    company_obj = get_object_or_404(Company, name=company_name)
-    context = {'servers': company_obj.server_set.all(), 
-           'company_name': company_name , 
-           'company_obj':company_obj,
-           'companies': Company.objects.all()
-           }
-
-    template = 'serverapp/servertable.html'
-    return render(request, template, context)
-
-
-@login_required
-def company_servertablex(request, number, company_name):
     company_obj = get_object_or_404(Company, name=company_name)
     ipdict = {}
     for server in company_obj.server_set.all():
@@ -232,11 +221,10 @@ def company_servertablex(request, number, company_name):
            'company_name': company_name , 
            'company_obj':company_obj,
            'companies': Company.objects.all(),
-           'basenumber': number,
            'ipdictionary': ipdict
            }
 
-    template = f'serverapp/servertable{number}.html'
+    template = f'serverapp/servertable.html'
     return  render(request, template, context)
 
     # return HttpResponse("You're looking at server %s." % company_obj.name)
@@ -252,7 +240,7 @@ def company_servertablex(request, number, company_name):
 #     return render(request, template,context)
 
 @login_required
-def basex(request, number,  server = None, action=None):
+def base(request, server = None, action=None):
       # company_obj = Company.objects.filter(name=company_name).first()
     #company_obj = Company.objects.get(name=company_name)
     print (f"action = {action}")
@@ -266,11 +254,10 @@ def basex(request, number,  server = None, action=None):
       except : action = 'Delete Failed'
 
     context = {'companies': Company.objects.all(),
-              'varnumber': number,
               'server' : server,
                 'action' : action }
 
-    template = f'serverapp/base{number}.html'
+    template = f'serverapp/base.html'
     return render(request, template,context)
 
 
@@ -403,30 +390,30 @@ def list_links(request, company_name, server_name):
     return render(request, template, context)
 
 
+# @login_required
+# def linkparameters (request, company_name, server_name, link_name):
+#       print ('### View is linkparameters')
+#       print ('### Link name is %s' % link_name)
+#       link_obj = Company.objects.get(name = company_name).server_set.get(name = server_name).serverlink_set.get(name = link_name)
+#       server_obj = get_object_or_404(Server, name=server_name)
+#       company_obj = get_object_or_404(Company, name=company_name)
+
+#       response = HttpResponse()
+#       response.write("You clicked on %s. : %d " % (link_obj, link_obj.oid))
+#       template = "serverapp/link_parameters.html"
+#       context = {'links': server_obj.serverlink_set.all(), 
+#                'company_name': company_name,
+#                'companies': Company.objects.all(),
+#                'company_obj' : company_obj,
+#                'server_name' : server_obj.name,
+#                'link_object' : link_obj
+#               }
+
+#       return render(request, template, context)
+
 @login_required
 def linkparameters (request, company_name, server_name, link_name):
       print ('### View is linkparameters')
-      print ('### Link name is %s' % link_name)
-      link_obj = Company.objects.get(name = company_name).server_set.get(name = server_name).serverlink_set.get(name = link_name)
-      server_obj = get_object_or_404(Server, name=server_name)
-      company_obj = get_object_or_404(Company, name=company_name)
-
-      response = HttpResponse()
-      response.write("You clicked on %s. : %d " % (link_obj, link_obj.oid))
-      template = "serverapp/link_parameters.html"
-      context = {'links': server_obj.serverlink_set.all(), 
-               'company_name': company_name,
-               'companies': Company.objects.all(),
-               'company_obj' : company_obj,
-               'server_name' : server_obj.name,
-               'link_object' : link_obj
-              }
-
-      return render(request, template, context)
-
-@login_required
-def linkparameters3 (request, company_name, server_name, link_name):
-      print ('### View is linkparameters2')
       print ('### Link name is %s' % link_name)
       print (f'### server name is {server_name}')
       print (f'### company name is {company_name}')
@@ -436,7 +423,7 @@ def linkparameters3 (request, company_name, server_name, link_name):
 
       response = HttpResponse()
       response.write("You clicked on %s. : %d " % (link_obj, link_obj.oid))
-      template = "serverapp/parameter_table3.html"
+      template = "serverapp/parameter_table.html"
       context = {'links': server_obj.serverlink_set.all(), 
                'company_name': company_name,
                'companies': Company.objects.all(),

@@ -1,4 +1,4 @@
-{% extends 'serverapp/base3.html' %}
+{% extends 'serverapp/base.html' %}
 
 {% block formreply %}
 
@@ -21,7 +21,7 @@
 		class="btn btn-light btn-lg" 
 		style ="display: inline; "
 		value= "{{ request.path }}"
-		onclick="location.href='{% url 'serverapp:basex' %}'" 
+		onclick="location.href='{% url 'serverapp:base' %}'" 
 		name='mybtn2'>
 		  Back
 	</button>

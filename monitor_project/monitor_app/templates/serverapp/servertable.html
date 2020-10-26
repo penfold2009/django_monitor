@@ -1,32 +1,45 @@
-{% extends 'serverapp/base2.html' %}
+{% extends 'serverapp/base.html' %}
 
 {% block servertable %}
 
 
- <div class="row">
-    <!--   --> <div class="container-fluid">
+  <div class="col-md-5 order-md-1">
 
-  <div class="col-md-1">
-  </div class="col-md-1">
-  <div class="col-md-7">
+       <script>
+      $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();   
+      });
+      </script>
 
       {% for server in servers %}
 
         <hr><br>
-         <h3 style ="display: inline"> {{ server.name }}</h3>
+         <h3 data-toggle="tooltip" title="{{ server.ip_list }}" style ="display: inline"> {{ server.name }}</h3>
 
          <!-- <button  style ="display: inline; position: absolute; right: 0" type="button" class="btn btn-light">Update</button> -->
         
           <button 
             type="submit" 
-            class="btn btn-light" 
+            class="btn btn-light btn-md" 
             style ="display: inline; position: absolute; right: 0"
-            value="Go" 
+            value= "{{ request.path }}"
             onclick="location.href='{% url 'serverapp:test_links' server.name %}'" 
             name='mybtn2'>
               Update
           </button>
-        
+
+          <button 
+            type="submit" 
+            class="btn btn-light btn-md" 
+            style ="display: inline; position: relative;right:0"
+            value= "delete"
+            onclick="location.href='{% url 'serverapp:confirm_request' server.name 'Delete' %}'" 
+            name='deletebtn'>
+              Delete
+          </button>
+
+
+          <!-- <input type="hidden" name="next" value="{{ request.path }}"> -->
         
         <table class="table table-hover">
 
@@ -34,7 +47,7 @@
             <tr>
               <th>No.</th>
               <th>Link  Name</th>
-              <th>Last Name</th>
+              <th>Status</th>
             </tr>
           </thead>
 
@@ -42,7 +55,7 @@
             {% for link in server.serverlink_set.all %}
               <tr style=" color: {{ link.colour }};">
                 <th scope="row">{{ link.oid }}</a></th>
-                <td><a href="{% url 'serverapp:linkparameters2' company_obj.name server.name link.name %}"  class="stretched-link" style="color: {{ link.colour }}">{{  link.name }}</td>
+                <td><a href="{% url 'serverapp:linkparameters' company_obj.name server.name link.name %}" style="color: {{ link.colour }}">{{  link.name }}</a></td>
                 <td>{{ link.status }}</td>
               </tr>
             {% endfor %}
@@ -53,11 +66,10 @@
      
       {% endfor %}
 
-   </div class="col-md-4">
-
+   </div class="col-md-5 order-md-1">
 {% block parameter_table %}
-{% endblock parameter_table %}
 
+{% endblock parameter_table %}
 
 {% endblock servertable %}
 
