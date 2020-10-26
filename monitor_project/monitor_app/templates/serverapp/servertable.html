@@ -5,26 +5,38 @@
 
   <div class="col-md-5 order-md-1">
 
+         <!-- <h3>{{ request.GET.response }}</h3> -->
+
+        {% for key, value in request.GET.items %}
+           <h3>{{ value }}</h3>
+        {% endfor %}
+
        <script>
       $(document).ready(function(){
         $('[data-toggle="tooltip"]').tooltip();   
       });
       </script>
 
-      {% for server in servers %}
 
+  
+
+      {% for server in servers %}
+     <form action="{% url 'serverapp:confirm_request_new' server.name %}" method="POST">
+     {% csrf_token %}
+
+      <input type="hidden" name="next" value="{{ request.path }}">
+   
         <hr><br>
          <h3 data-toggle="tooltip" title="{{ server.ip_list }}" style ="display: inline"> {{ server.name }}</h3>
 
          <!-- <button  style ="display: inline; position: absolute; right: 0" type="button" class="btn btn-light">Update</button> -->
-        
+
           <button 
             type="submit" 
             class="btn btn-light btn-md" 
             style ="display: inline; position: absolute; right: 0"
-            value= "{{ request.path }}"
-            onclick="location.href='{% url 'serverapp:test_links' server.name %}'" 
-            name='mybtn2'>
+            value= "update"
+            name='action'>
               Update
           </button>
 
@@ -33,13 +45,11 @@
             class="btn btn-light btn-md" 
             style ="display: inline; position: relative;right:0"
             value= "delete"
-            onclick="location.href='{% url 'serverapp:confirm_request' server.name 'Delete' %}'" 
-            name='deletebtn'>
+            name='action'>
               Delete
           </button>
 
 
-          <!-- <input type="hidden" name="next" value="{{ request.path }}"> -->
         
         <table class="table table-hover">
 
@@ -63,10 +73,12 @@
 
         </table>
         <br><br>
-     
-      {% endfor %}
+    </form>
 
+      {% endfor %}
+   
    </div class="col-md-5 order-md-1">
+
 {% block parameter_table %}
 
 {% endblock parameter_table %}

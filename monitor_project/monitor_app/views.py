@@ -121,7 +121,7 @@ def server_form(request, form_data = None ,  report = None):
 
 
 
-            ### When redirecting to another view instead of an html tmeplate can use the 'reverse' function ##
+            ### When redirecting to another view instead of an html template can use the 'reverse' function ##
             ### https://docs.djangoproject.com/en/3.1/intro/tutorial04/#write-a-minimal-form
             ### the url created will be something like :-
             ### http://127.0.0.1:8000/form_response/Aritari/Set%20up%20links%20for%20Office%20Rapid%20server2
@@ -149,19 +149,68 @@ def server_form(request, form_data = None ,  report = None):
 
 
 
+def confirm_request_new (request, name, decision=None, action=None):
+
+    show_requests(request)
+
+    if request.method == 'POST':
+
+      print (f'name {name}')
+      print (f"Action : {request.POST['action']}")
+      template = 'serverapp/confirm_action.html'
+      context = {'name' : name , 'action': request.POST['action'],
+                 'next': request.POST['next']}
+      return render(request, template, context)
+
+    else:
+
+        url = request.GET['next']
+        decision = request.GET['decision']
+
+        print (f"url is {url}")
+
+        if (decision == 'confirm'):
+           
+           if (action == 'delete'):
+            print (f'Deleting {name}')
+            server_obj = get_object_or_404(Server, name = name)
+            try : 
+              server_obj.delete()
+              response = f'{name} Deleted'
+            except : response = f'Failed to delete {name}'
+
+           elif (action == 'update'):
+             try:
+                Server.objects.get(name = name).test_all_links()
+                response = f'Links updated for {name}'
+             except : response = f'Failed to update links for  {name}'
+
+           else : response = f'Cant {action} for {name}'
+
+        else : response = f'{name} {action} cancelled.'
 
 
-def confirm_request (request, name, action):
 
-  print (f'name {name}')
-  print (f'action {action}')
-  print ("request.GET: ", request.GET)
+        print ('response is', response)
+        nexturl=f'{url}?response={response}'
+        return HttpResponseRedirect (nexturl) 
 
-  template = 'serverapp/confirm_action.html'
-  action2 = f'{action} {name}'
-  context = {'action': action, 'name' : name}
+      # return HttpResponse(f"Maybe Deleting {name}.<br>Next is {request.GET['next']}<br>Action is {action}<br>Decision is {request.GET['decision']}")
 
-  return render(request, template, context)
+
+# def confirm_request (request, name, action):
+
+#   print (f'name {name}')
+#   print (f'action {action}')
+#   print ("request.GET: ", request.GET)
+
+#   # show_requests(request)
+
+#   template = 'serverapp/confirm_action.html'
+#   action2 = f'{action} {name}'
+#   context = {'action': action, 'name' : name}
+
+#   return render(request, template, context)
 
 
 
@@ -196,7 +245,10 @@ def test_links (request, number, server_name):
 @login_required
 def company_servertable(request, company_name):
     company_obj = get_object_or_404(Company, name=company_name)
-    print ("request.path:" , request.path )
+
+    nexturl = request.path
+    show_requests(request)
+
     ipdict = {}
     for server in company_obj.server_set.all():
           ipdict[server.name] = []
@@ -206,7 +258,8 @@ def company_servertable(request, company_name):
            'company_name': company_name , 
            'company_obj':company_obj,
            'companies': Company.objects.all(),
-           'ipdictionary': ipdict
+           'ipdictionary': ipdict,
+           'next': nexturl
            }
 
     template = f'serverapp/servertable.html'
@@ -244,6 +297,17 @@ def base(request, server = None, action=None):
 
     template = f'serverapp/base.html'
     return render(request, template,context)
+
+
+
+
+
+def show_requests(request):
+  print ("---- Show requests ---")
+  for attr in dir(request) :
+    if (not '_' in attr) and (attr != 'environ') and (attr != 'META'):
+      print (f"request.{attr}  {getattr(request,attr)}")
+
 
 
 
@@ -374,27 +438,6 @@ def list_links(request, company_name, server_name):
     template = 'serverapp/link_details.html'
     return render(request, template, context)
 
-
-# @login_required
-# def linkparameters (request, company_name, server_name, link_name):
-#       print ('### View is linkparameters')
-#       print ('### Link name is %s' % link_name)
-#       link_obj = Company.objects.get(name = company_name).server_set.get(name = server_name).serverlink_set.get(name = link_name)
-#       server_obj = get_object_or_404(Server, name=server_name)
-#       company_obj = get_object_or_404(Company, name=company_name)
-
-#       response = HttpResponse()
-#       response.write("You clicked on %s. : %d " % (link_obj, link_obj.oid))
-#       template = "serverapp/link_parameters.html"
-#       context = {'links': server_obj.serverlink_set.all(), 
-#                'company_name': company_name,
-#                'companies': Company.objects.all(),
-#                'company_obj' : company_obj,
-#                'server_name' : server_obj.name,
-#                'link_object' : link_obj
-#               }
-
-#       return render(request, template, context)
 
 @login_required
 def linkparameters (request, company_name, server_name, link_name):
