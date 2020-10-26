@@ -56,7 +56,7 @@
 
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-     <a href="{% url 'serverapp:basex' 3 %}">
+     <a href="{% url 'serverapp:basex' 3 'None' 'None' %}">
       <img class="navbar-brand"  src="{% static 'serverapp/aritari-logo.png' %}" alt="Powered By Voipex" height="60px">
      </a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -147,8 +147,6 @@
 
               {% endif %} 
             </ul>
-
-
   </div>
 </nav>
 
@@ -161,23 +159,40 @@
 
 
 
- <div class="container-fluid">
-   <div class="row">
+   <div class="py-5 text-center">
+    <div class="container-fluid">
+      <div class="row">
+
+<!--      <div class="col-md-5">
+     </div class="col-md-5"> -->
+
      <div class="col-md-1">
      </div class="col-md-1">
 
-
-
       {% block servertable %}
-         <div class="py-5 text-center">
            <div class="container-fluid"> 
-               <h2>Aritari Server Monitor</h2>
-               <hr>
-               <img src="{% static 'serverapp/aritari-logo.png' %}" alt="Powered By Voipex" height="100px">
-           </div>
-         <div class="col-md-7">
-      {% endblock servertable %}
+               <h2>Aritari Server Monitor</h2><br>
+               <!-- <hr> -->
+               <img src="{% static 'serverapp/aritari-logo.png' %}" alt="Powered By Voipex" height="100px"><br><br>
 
+               {% if server != 'None' %}
+                 <h3>{{server}}</h3>
+               {% endif %}
+
+               {% if action != 'None' %}
+                 <h3>{{action}}</h3>
+               {% endif %}
+
+                {% block confirm %}
+                {% endblock confirm %}
+
+                {% block formreply %}
+                {% endblock formreply %}
+
+           </div>
+
+         <!-- <div class="col-md-7"> -->
+      {% endblock servertable %}
 
 
       {% block login_content %}
@@ -188,13 +203,11 @@
       {% endblock logout-content%}
 
 
-      {% block formreply %}
-      {% endblock formreply %}
 
 
-   </div class="row">
- </div class="container-fluid">
-
+    </div class="row">
+    </div class="container-fluid">
+   </div class="py-5 text-center">
 
 
 

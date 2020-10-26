@@ -123,6 +123,12 @@ def get_name(request, form_data = None ,  report = None):
 
             ### When redirecting to another view instead of an html tmeplate can use the 'reverse' function ##
             ### https://docs.djangoproject.com/en/3.1/intro/tutorial04/#write-a-minimal-form
+            ### the url created will be something like :-
+            ### http://127.0.0.1:8000/form_response/Aritari/Set%20up%20links%20for%20Office%20Rapid%20server2
+            ### In urls.py this matches the url sting "path('form_response/<str:form_data>/<str:report>', views.get_name, name='get_name'),"
+            ### and so will load the view get_name.
+            ### notice there is another url for getname " path('form_test/', views.get_name, name='get_name'), "
+            ### but the string format does not match so it will not be used.
             return HttpResponseRedirect(reverse('serverapp:get_name', args=(form.cleaned_data['company'], report)  ) )
 
     # if a GET (or any other method) we'll create a blank form
@@ -139,6 +145,32 @@ def get_name(request, form_data = None ,  report = None):
 
 
     return render(request, 'serverapp/form_test1.html', {'form': form, 'form_list' : paramform_list })
+
+
+
+
+
+
+def confirm_request (request, name, action):
+
+  print (f'name {name}')
+  print (f'action {action}')
+  print (request)
+
+  template = 'serverapp/confirm_action.html'
+  action2 = f'{action} {name}'
+  context = {'action': action, 'name' : name}
+
+  # if 'Delete' in action:
+  #   print (f'Deleting {name}')
+  #   server_obj = get_object_or_404(Server, name = name)
+  #   server_obj.delete()
+
+  return render(request, template, context)
+
+
+
+
 
 
 
@@ -161,6 +193,7 @@ def test_links (request, number, server_name):
  ##         return HttpResponse(f"Updating links for {server_obj.name} path is {request.path}")
 
           context = {'companies': Company.objects.all(),
+                      'action' : f'{server_name} Updated',
                     'varnumber': number}
 
           template = f'serverapp/base{number}.html'
@@ -219,11 +252,23 @@ def company_servertablex(request, number, company_name):
 #     return render(request, template,context)
 
 @login_required
-def basex(request, number):
+def basex(request, number,  server = None, action=None):
       # company_obj = Company.objects.filter(name=company_name).first()
     #company_obj = Company.objects.get(name=company_name)
+    print (f"action = {action}")
+    print (f"server = {server}")
+
+
+    if action == 'Delete':
+      print (f'Deleting {server}')
+      server_obj = get_object_or_404(Server, name = server)
+      try : server_obj.delete(); action = 'Deleted'
+      except : action = 'Delete Failed'
+
     context = {'companies': Company.objects.all(),
-              'varnumber': number}
+              'varnumber': number,
+              'server' : server,
+                'action' : action }
 
     template = f'serverapp/base{number}.html'
     return render(request, template,context)

@@ -10,8 +10,8 @@
 				{% for key, val in request.POST.items %}
 			       {{key}} : {{val}} <br>
 			     {%  endfor %}
-		   Created entry for  {{server}}<br>
-		   Thank you {{name}}<br>
+		   <!-- Created entry for  {{name}}<br> -->
+		   Thank you {{ user.get_username|capfirst }}<br>
 		   {{report}}
 	    </p>
 	<hr>
@@ -19,7 +19,7 @@
 	<button 
 		type="submit" 
 		class="btn btn-light btn-lg" 
-		style ="display: inline; position: absolute; left: 0"
+		style ="display: inline; "
 		value= "{{ request.path }}"
 		onclick="location.href='{% url 'serverapp:basex' %}'" 
 		name='mybtn2'>

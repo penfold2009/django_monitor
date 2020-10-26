@@ -15,12 +15,13 @@ urlpatterns = [ ##path('', views.login_view, name='login_view'),
                 path('form_reply/<str:servername>', views.form_reply, name='form_reply'),
                 path('form_test/', views.get_name, name='get_name'),
                 path('form_response/<str:form_data>/<str:report>', views.get_name, name='get_name'),
+                path('confirm/<str:name>/<str:action>', views.confirm_request, name='confirm_request'),
 
 
                 re_path(r'^showlinks/(?P<company_name>.+)/(?P<server_name>.+)/$', views.list_links, name='links'), #https://docs.djangoproject.com/en/3.0/topics/http/urls/#using-regular-expressions
                 re_path(r'^get_linkparams3/(?P<company_name>.+)/(?P<server_name>[\w\s]+)/(?P<link_name>.+)/$', views.linkparameters3, name='linkparameters3'), #https://docs.djangoproject.com/en/3.0/topics/http/urls/#using-regular-expressions
                 re_path(r'^get_linkparams/(?P<company_name>.+)/(?P<server_name>[\w\s]+)/(?P<link_name>.+)/$', views.linkparameters, name='linkparameters'), #https://docs.djangoproject.com/en/3.0/topics/http/urls/#using-regular-expressions
-                re_path(r'^base(?P<number>[0-9]+)/$', views.basex, name='basex'), #https://docs.djangoproject.com/en/3.0/topics/http/urls/#using-regular-expressions
+                re_path(r'^base(?P<number>[0-9]+)/(?P<server>.+)/(?P<action>.*)/$', views.basex, name='basex'), #https://docs.djangoproject.com/en/3.0/topics/http/urls/#using-regular-expressions
                 re_path(r'^company_servertable(?P<number>[0-9]+)/(?P<company_name>.+)/$', views.company_servertablex, name='servertablex'),
                 re_path(r'^new_entry_form(?P<number>[0-9]+)', views.new_entry_form, name='viewname-new_entry_form'),
                 path('get_linkparams/', views.linkparameters, name='linkparameters'), #https://docs.djangoproject.com/en/3.0/topics/http/urls/#using-regular-expressions
