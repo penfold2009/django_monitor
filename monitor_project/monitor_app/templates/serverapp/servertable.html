@@ -34,7 +34,7 @@
           <button 
             type="submit" 
             class="btn btn-light btn-md" 
-            style ="display: inline; position: absolute; right: 0"
+            style ="display: inline; position: relative; right: 0"
             value= "update"
             name='action'>
               Update
@@ -51,7 +51,7 @@
 
 
         
-        <table class="table table-hover">
+        <table id = 'servertable' class="table table-hover">
 
           <thead>
             <tr>
@@ -65,7 +65,7 @@
             {% for link in server.serverlink_set.all %}
               <tr style=" color: {{ link.colour }};">
                 <th scope="row">{{ link.oid }}</a></th>
-                <td><a href="{% url 'serverapp:linkparameters' company_obj.name server.name link.name %}" style="color: {{ link.colour }}">{{  link.name }}</a></td>
+                <td><a id = 'linkname' href="{% url 'serverapp:linkparameters' company_obj.name server.name link.name %}" style="color: {{ link.colour }}">{{  link.name }}</a></td>
                 <td>{{ link.status }}</td>
               </tr>
             {% endfor %}

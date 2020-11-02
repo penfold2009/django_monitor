@@ -9,8 +9,8 @@ urlpatterns = [ ##path('', views.login_view, name='login_view'),
                 path('', views.base , name='base' ),  ###https://docs.djangoproject.com/en/3.1/topics/http/urls/#passing-extra-options-to-view-functions
                 path('company_server/<str:company_name>/', views.company_server, name='server'),
                 path('company_servertable/<str:company_name>/', views.company_servertable, name='servertable'),
-                path('update_links/<str:server_name>/', views.test_links, {'number' : 3}, name='test_links'),
-                path('delete_server/<str:server_name>/', views.delete_server,{'number' : 3}, name='delete_server'),
+                # path('update_links/<str:server_name>/', views.test_links, {'number' : 3}, name='test_links'),
+                # path('delete_server/<str:server_name>/', views.delete_server,{'number' : 3}, name='delete_server'),
                 path('submitform/', views.form_process, name='form_process'),
                 path('form_reply/<str:servername>', views.form_reply, name='form_reply'),
                 path('form_newserver/', views.server_form, name='server_form'),
@@ -21,7 +21,7 @@ urlpatterns = [ ##path('', views.login_view, name='login_view'),
                 re_path(r'^showlinks/(?P<company_name>.+)/(?P<server_name>.+)/$', views.list_links, name='links'), #https://docs.djangoproject.com/en/3.0/topics/http/urls/#using-regular-expressions
                 re_path(r'^get_linkparams/(?P<company_name>.+)/(?P<server_name>[\w\s]+)/(?P<link_name>.+)/$', views.linkparameters, name='linkparameters'), #https://docs.djangoproject.com/en/3.0/topics/http/urls/#using-regular-expressions
                 re_path(r'^base/(?P<server>.+)/(?P<action>.*)/$', views.base, name='base'), #https://docs.djangoproject.com/en/3.0/topics/http/urls/#using-regular-expressions
-                path('get_linkparams/', views.linkparameters, name='linkparameters'), #https://docs.djangoproject.com/en/3.0/topics/http/urls/#using-regular-expressions
+                # path('get_linkparams/', views.linkparameters, name='linkparameters'), #https://docs.djangoproject.com/en/3.0/topics/http/urls/#using-regular-expressions
 ]
 
 
