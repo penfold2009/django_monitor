@@ -68,6 +68,7 @@ class Server(models.Model):
                   tunnelidlist = [int(x.split(' = ')[1]) for x in mywalk if 'vibePeerIndex' in x]
                   print (tunnelidlist)
                   for oid in tunnelidlist:
+                     addlink = False
                      linkname = getparameter(self,"vibePeerName" , oid)
                      print ("linkname is '%s'." % linkname)
                      if not linkname:
@@ -80,12 +81,17 @@ class Server(models.Model):
                             else: 
                               if linkobj.server == self:
                                  print ("link %s already exists for server %s" % (linkname, self))
-                       
+                              else: addlink = True
                         else:
+                          addlink = True
+
+                        if addlink:
                           print ("Adding %s to %s" % (linkname, self)) 
                           linkobj = ServerLink( name = linkname, oid = oid, server = self)
                           linkobj.save()
                           linkobj.setuptests(server_parameters['parameterlist'], oid)
+      
+
       
     def test_all_links(self):
       for link in self.serverlink_set.all(): 
