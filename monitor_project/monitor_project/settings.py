@@ -28,7 +28,7 @@ with open('/etc/apache2/django.key') as f:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['78.129.203.122']
+ALLOWED_HOSTS = ['51.89.201.195']
 
 
 # Application definition

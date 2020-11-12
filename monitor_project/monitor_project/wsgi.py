@@ -12,9 +12,10 @@ import os,sys
 from django.core.wsgi import get_wsgi_application
 
 #https://stackoverflow.com/questions/14927345/importerror-no-module-named-django-core-wsgi-apache-virtualenv-aws-wsgi
-sys.path.append ('/home/colin/django_monitor/monitor_project')
-sys.path.append('/home/colin/django_monitor/venv-dj-monitor/lib/python3.6/site-packages/')
-
+#sys.path.append ('/home/colin/django_monitor/monitor_project')
+#sys.path.append('/home/colin/django_monitor/venv-dj-monitor/lib/python3.6/site-packages/')
+sys.path.append ('/home/monitor1/GIT_REPOSE/django_monitor/monitor_project')
+sys.path.append ('/home/monitor1/.local/share/virtualenvs/django_monitor-JQ1e0z58/lib/python3.6/site-packages/')
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'monitor_project.settings')
 
 application = get_wsgi_application()
