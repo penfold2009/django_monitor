@@ -51,6 +51,7 @@ EZGmail = "*"
 ipython_genutils = "*"
 Pygments = "*"
 daphne = "*"
+psycopg2-binary = "*"
 
 [requires]
 python_version = "3.6"
