@@ -2,7 +2,9 @@ from os import system
 from monitor_app.models import *
 import re
 import ezgmail  ### ensure token.json  token.pickle exist in the running dir
-
+from pathlib import Path
+import json
+from django.forms import GenericIPAddressField
 
 def ping(server):
 
@@ -27,9 +29,6 @@ def sendemail(server, subject, message):
        sleep(1)
 
 
-##
-
-
 # def intialise_server_list(server_list, serverfile):
 # 
 #   try: return [ Server(ipaddresslist = server['ipaddress'],
@@ -43,49 +42,143 @@ def sendemail(server, subject, message):
 #     logprint ("Error - %s" % err)
 
 
+def setup_serverlist( serverfile = 'servers-aritari.json'):
 
-def intialise_server_list(server_list):
+	myfile  = Path(environ['PWD'] + '/' + serverfile)
 
-	for server in server_list :
-		if 'logfile' not in server:
-			
-			if Company.objects.all().filter(name = server['company']):
-				db_company = Company.objects.all().get(name = server['company'])
+	if myfile.is_file():
+	  with open(myfile) as json_file: server_list = json.load(json_file)
+	else:
+	  print ("File not found %s" % myfile)
+	  server_list = [{"testmode":0, "logfile": "server_monitoring.log", "statusfile":"server_status.log"}]
+
+
+	config_list = []
+	config_list = [config for config in server_list if "testmode" in config]
+
+
+	if len(config_list) is not 0:
+	   config_list= config_list[0]
+	   logfile = config_list['logfile']
+	   testmode = bool(config_list['testmode'])
+	   statusfile =    config_list['statusfile']
+
+	else:
+	   logfile = 'server_monitoring.log'
+	   statusfile =  'server_status.log'
+	   testmode = False
+	   print ("Logfile not specified using default %s" % logfile)
+
+
+	print("Logfile is %s" % logfile)
+	print ("status file is %s" % statusfile)
+
+	return server_list, logfile, statusfile,testmode
+
+
+
+
+def add_server_to_db (server):
+			print ("function: add_server_to_db") 
+	# if Company.objects.all().filter(name = server['company']):
+			if Company.objects.filter(name = server['company']):
+				db_company = Company.objects.get(name = server['company'])
 				print (db_company.name, " exists")
 			else : 
 				db_company = Company(name = server['company'])
 				db_company.save()
 
+			print ("#### Check Servers ### ")
+			# if Server.objects.filter(name = server['name']):
+			#if Server.objects.filter(name = server['name']):
 			if Server.objects.filter(name = server['name']):
-				print ("Server '%s' already exists for %s" % (server['name'], server['company']))
+				if Server.objects.get(name = server['name']).company.name == server['company']:
+					return ("Server '%s' already exists for %s" % (server['name'], server['company']))
+
 			else:
 				db_server = Server( name = server['name'], 
-					                online= "True", 
-					                snmp_community = server['community'], 
-                                    email_list = server['emaillist']
-					        )
+								online= "True", 
+								snmp_community = server['community'], 
+								email_list = server['emaillist']
+			)
 
-				db_server.save()
+			db_server.save()
+			#print(db_company.name)
+			print("Adding %s to %s" % (db_server,db_company))
+			db_company.server_set.add(db_server)
+			db_company.save()
 
-				print(db_company.name)
-				print("Adding %s to %s" % (db_server,db_company))
-				db_company.server_set.add(db_server)
-				db_company.save()
-
-	            ## ip addresses
-				if 'ipaddress' not in server.keys():
-					print ("Error no ip addresses specified")
-					continue
-
-				else :
-					for ip in server['ipaddress']:
+            ## ip addresses
+			if 'ipaddress' not in server.keys():
+				return ("Error no ip addresses specified")
+				
+			else :
+				iplist = str(server['ipaddress']).split(',')
+				ipvalue = GenericIPAddressField(protocol='ipv4')
+				for ip in iplist:
+					print(ip)
+					try : 
+						ipvalue.clean(ip)
 						ip = ServerIpAddress(ip=ip, server=db_server)
 						ip.save()
+					except Exception as err: print (f" IP check for {ip} : {err}")
 
-				db_server.setuplinks(server)
+			db_server.setuplinks(server)
+			return (f"Set up links for {server['name']}")
+			# for link in db_server.serverlink_set.all():
+			# 	print ("Link is ", link)
 
-				# for link in db_server.serverlink_set.all():
-				# 	print ("Link is ", link)
+
+
+
+
+def intialise_server_list():
+
+	server_list, logfile, statusfile,testmode  = setup_serverlist()
+
+	for server in server_list :
+		if 'logfile' not in server:
+			add_server_to_db (server)
+
+			# # if Company.objects.all().filter(name = server['company']):
+			# if Company.objects.get(name = server['company']):
+			# 	db_company = Company.objects.get(name = server['company'])
+			# 	print (db_company.name, " exists")
+			# else : 
+			# 	db_company = Company(name = server['company'])
+			# 	db_company.save()
+
+			# # if Server.objects.filter(name = server['name']):
+			# if Server.objects.get(name = server['name']):
+			# 	print ("Server '%s' already exists for %s" % (server['name'], server['company']))
+			# else:
+			# 	db_server = Server( name = server['name'], 
+			# 		                online= "True", 
+			# 		                snmp_community = server['community'], 
+   #                                  email_list = server['emaillist']
+			# 		        )
+
+			# 	db_server.save()
+
+			# 	#print(db_company.name)
+			# 	print("Adding %s to %s" % (db_server,db_company))
+			# 	db_company.server_set.add(db_server)
+			# 	db_company.save()
+
+	  #           ## ip addresses
+			# 	if 'ipaddress' not in server.keys():
+			# 		print ("Error no ip addresses specified")
+			# 		continue
+
+			# 	else :
+			# 		for ip in server['ipaddress']:
+			# 			ip = ServerIpAddress(ip=ip, server=db_server)
+			# 			ip.save()
+
+			# 	db_server.setuplinks(server)
+
+			# 	# for link in db_server.serverlink_set.all():
+			# 	# 	print ("Link is ", link)
 					
 
 
