@@ -1,0 +1,30 @@
+{% extends 'serverapp/base.html' %}
+
+{% block formreply %}
+
+
+     <br>
+     <br>
+	<h3> Thank you. </h3>
+		<p> 
+				{% for key, val in request.POST.items %}
+			       {{key}} : {{val}} <br>
+			     {%  endfor %}
+		   <!-- Created entry for  {{name}}<br> -->
+		   Thank you {{ user.get_username|capfirst }}<br>
+		   {{report}}
+	    </p>
+	<hr>
+
+	<button 
+		type="submit" 
+		class="btn btn-light btn-lg" 
+		style ="display: inline; "
+		value= "{{ request.path }}"
+		onclick="location.href='{% url 'serverapp:base' %}'" 
+		name='mybtn2'>
+		  Back
+	</button>
+
+
+{% endblock formreply %}

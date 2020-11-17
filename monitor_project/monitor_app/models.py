@@ -15,10 +15,12 @@ class Company(models.Model):
         return self.name
 
     def test_all_servers(self):
-        ## for server in  self.server_set.all(): 
-        ## server.test_all_links().values() returns a dict view not just the values so need to cast as a lit and get
+         for server in  self.server_set.all(): 
+            server.test_all_links() 
+
+        ## returns a dict view not just the values so need to cast as a list and get
         ## get the first element. See :  https://docs.python.org/3/library/stdtypes.html#dictionary-view-objects
-        return  {self.name: {server.name:list(server.test_all_links().values())[0]  for server in self.server_set.all() } }
+        ## return  {self.name: {server.name:list(server.test_all_links().values())[0]  for server in self.server_set.all() } }
 
 
 
@@ -43,6 +45,10 @@ class Server(models.Model):
     # def showtest(self):
     #     return self.teststring
 
+    def ip_list (self): ## Get alist of ips that can be dusplayed when mousing over the server name.
+      return ' : '.join([ ipobj.ip for ipobj in ServerIpAddress.objects.filter(server_id = self.id) ])
+
+
     def setuplinks(self, server_parameters):
         parameter = "vibePeerIndex"
         for ipobj in self.serveripaddress_set.all():
@@ -50,7 +56,7 @@ class Server(models.Model):
          try : mywalk = SNMPWalk(parameter,ipobj.ip.strip(),self.snmp_community)
          
          except: 
-              print ("SNMPWalk ('%s','%s','%s')" % (parameter,ipobj.ip,self.community))
+              print ("SNMPWalk ('%s','%s','%s')" % (parameter,ipobj.ip,self.snmp_community))
               print ("Error: Check that parameters are correct")
          else:
            if len(mywalk) == 1 and "No SNMP response" in mywalk[0][0]: 
@@ -62,6 +68,7 @@ class Server(models.Model):
                   tunnelidlist = [int(x.split(' = ')[1]) for x in mywalk if 'vibePeerIndex' in x]
                   print (tunnelidlist)
                   for oid in tunnelidlist:
+                     addlink = False
                      linkname = getparameter(self,"vibePeerName" , oid)
                      print ("linkname is '%s'." % linkname)
                      if not linkname:
@@ -74,18 +81,23 @@ class Server(models.Model):
                             else: 
                               if linkobj.server == self:
                                  print ("link %s already exists for server %s" % (linkname, self))
-                       
+                              else: addlink = True
                         else:
+                          addlink = True
+
+                        if addlink:
                           print ("Adding %s to %s" % (linkname, self)) 
                           linkobj = ServerLink( name = linkname, oid = oid, server = self)
                           linkobj.save()
                           linkobj.setuptests(server_parameters['parameterlist'], oid)
       
+
+      
     def test_all_links(self):
-      #for link in self.serverlink_set.all(): 
+      for link in self.serverlink_set.all(): 
         #print ("Testing ", link.name)
-        #link.test_all_mibs()
-      return {self.name: { link.name :list(link.test_all_mibs().values())[0] for link in self.serverlink_set.all()}  }
+        link.test_all_mibs()
+      #return {self.name: { link.name :list(link.test_all_mibs().values())[0] for link in self.serverlink_set.all()}  }
 
 
 
@@ -128,7 +140,10 @@ class ServerLink(models.Model):
      # MIBParameter.objects.bulk_update(miblist, mib_parameter_list)
      # MIBParameter.objects.bulk_create(miblist, mib_parameter_list)
     def test_all_mibs(self):
-          return {self.name: {mib.name :list(mib.checkstat().values())[0] for mib in self.mibparameter_set.all()} }
+          for mib in self.mibparameter_set.all():
+            mib.checkstat()
+
+          #return {self.name: {mib.name :list(mib.checkstat().values())[0] for mib in self.mibparameter_set.all()} }
 
 
 
@@ -244,6 +259,14 @@ class MIBParameter (models.Model):
              else: self.current_status = "below"
 
 
+           if self.name == 'Link Status' and self.parent_link.status != self.current_status:
+                self.parent_link.status = self.current_status
+                if self.current_status == 'up':
+                   self.parent_link.colour = 'black'
+                else: self.parent_link.colour = 'grey'
+                self.parent_link.save()
+
+
            if str(self.current_status) != str(self.mib_status):
               self.transition_statetime = time() - self.statetimestart
               print (" '%s' link '%s' for server '%s' has changed state to '%s' ." % (self.name, self.parent_link.name , self.parent_link.server.name, self.current_status) )
@@ -253,15 +276,17 @@ class MIBParameter (models.Model):
                  self.mib_status  = self.current_status
                  self.transition_statetime = 0
                  self.statetimestart = time()
-                 self.save()
                  
                  if self.email :
                     if self.thresholdvalue:  return_string  = ("%s : %s threshold value of %s" % (self.name, self.mib_status, self.thresholdvalue))
                     else : return_string  = ("%s : %s" % (self.name, self.mib_status))
                  else : return_string = None
 
-             
+
               else : return_string = None
+
+              print ("### Saving changes to db ###")
+              self.save()
 
            else :
                  self.transition_statetime = 0
