@@ -8,14 +8,19 @@
            <div class="panel-heading">{{ company_name }} servers    
 </div>
               <div class="panel-body">
-				{% for get_server in company_obj.server_set.all %}
-    		      {% if get_server.name == server_name %}
-                    <li  style = "margin-left:-10px" class="glyphicon glyphicon-chevron-right"><a style = "color:black" href="{% url 'serverapp:links' company_name get_server.name %}">{{ get_server.name }}</a></li>
-              {% else %}
-                    <li><a style = "color:grey" href="{% url 'serverapp:links' company_name get_server.name %}">{{ get_server.name }}</a></li>
-              {% endif %}
 
-      	{% endfor %}
+
+       				{% for get_server in company_obj.server_set.all %}
+          		      {% if get_server.name == server_name %}
+                          <li  style = "margin-left:-10px" class="glyphicon glyphicon-chevron-right"><a style = "color:black" href="{% url 'serverapp:links' company_name get_server.name %}">{{ get_server.name }}</a></li>
+                    {% else %}
+                          <li><a style = "color:grey" href="{% url 'serverapp:links' company_name get_server.name %}">{{ get_server.name }}</a></li>
+                    {% endif %}
+
+            	{% endfor %}
+
+
+
               </div class="panel-body">
         </ul>
      </div class="col-md-3">
