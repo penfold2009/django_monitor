@@ -1,0 +1,18 @@
+
+In apache2/sites-enabled/django.conf there is a alias command 
+
+      Alias /static "/home/monitor1/GIT_REPOSE/django_monitor/monitor_project/monitor_app/static"
+     <Directory /home/monitor1/GIT_REPOSE/django_monitor/monitor_project/monitor_app/static>
+
+      <IfVersion < 2.4>
+         Order allow,deny
+         Allow from all
+      </IfVersion>
+      <IfVersion >= 2.4>
+         Require all granted
+      </IfVersion>
+     </Directory>
+
+This means that static dirs from other django packages need to be linked to here otherwise they will not get found.
+
+

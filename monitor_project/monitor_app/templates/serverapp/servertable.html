@@ -1,7 +1,7 @@
 {% extends 'serverapp/base.html' %}
 
 {% block servertable %}
-
+{% load static %}
 
   <div class="col-md-5 order-md-1">
 
@@ -19,64 +19,72 @@
 
 
   
+         {% if  servers %} 
 
-      {% for server in servers %}
-     <form action="{% url 'serverapp:confirm_request_new' server.name %}" method="POST">
-     {% csrf_token %}
+            {% for server in servers %}
+           <form action="{% url 'serverapp:confirm_request_new' server.name %}" method="POST">
+           {% csrf_token %}
 
-      <input type="hidden" name="next" value="{{ request.path }}">
-   
-        <hr><br>
-         <h3 data-toggle="tooltip" title="{{ server.ip_list }}" style ="display: inline"> {{ server.name }}</h3>
+            <input type="hidden" name="next" value="{{ request.path }}">
+         
+              <hr><br>
+               <h3 data-toggle="tooltip" title="{{ server.ip_list }}" style ="display: inline"> {{ server.name }}</h3>
 
-         <!-- <button  style ="display: inline; position: absolute; right: 0" type="button" class="btn btn-light">Update</button> -->
+               <!-- <button  style ="display: inline; position: absolute; right: 0" type="button" class="btn btn-light">Update</button> -->
 
-          <button 
-            type="submit" 
-            class="btn btn-light btn-md" 
-            style ="display: inline; position: relative; right: 0"
-            value= "update"
-            name='action'>
-              Update
-          </button>
+                <button 
+                  type="submit" 
+                  class="btn btn-light btn-md" 
+                  style ="display: inline; position: relative; right: 0"
+                  value= "update"
+                  name='action'>
+                    Update
+                </button>
 
-          <button 
-            type="submit" 
-            class="btn btn-light btn-md" 
-            style ="display: inline; position: relative;right:0"
-            value= "delete"
-            name='action'>
-              Delete
-          </button>
+                <button 
+                  type="submit" 
+                  class="btn btn-light btn-md" 
+                  style ="display: inline; position: relative;right:0"
+                  value= "delete"
+                  name='action'>
+                    Delete
+                </button>
 
 
-        
-        <table id = 'servertable' class="table table-hover">
+              
+              <table id = 'servertable' class="table table-hover">
 
-          <thead>
-            <tr>
-              <th>No.</th>
-              <th>Link  Name</th>
-              <th>Status</th>
-            </tr>
-          </thead>
+                <thead>
+                  <tr>
+                    <th>No.</th>
+                    <th>Link  Name</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
 
-          <tbody>
-            {% for link in server.serverlink_set.all %}
-              <tr style=" color: {{ link.colour }};">
-                <th scope="row">{{ link.oid }}</a></th>
-                <td><a id = 'linkname' href="{% url 'serverapp:linkparameters' company_obj.name server.name link.name %}" style="color: {{ link.colour }}">{{  link.name }}</a></td>
-                <td>{{ link.status }}</td>
-              </tr>
+                <tbody>
+                  {% for link in server.serverlink_set.all %}
+                    <tr style=" color: {{ link.colour }};">
+                      <th scope="row">{{ link.oid }}</a></th>
+                      <td><a id = 'linkname' href="{% url 'serverapp:linkparameters' company_obj.name server.name link.name %}" style="color: {{ link.colour }}">{{  link.name }}</a></td>
+                      <td>{{ link.status }}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+
+              </table>
+              <br><br>
+          </form>
+
             {% endfor %}
-          </tbody>
+         {% else  %}
+                <h3>No servers for {{ company_name }}</h3><br>
+               <img src="{% static 'serverapp/aritari-logo.png' %}" alt="Powered By Voipex" height="100px"><br><br>
 
-        </table>
-        <br><br>
-    </form>
+         {% endif %}
 
-      {% endfor %}
-   
+
+
    </div class="col-md-5 order-md-1">
 
 {% block parameter_table %}
