@@ -1,6 +1,20 @@
 
 from pysnmp.hlapi import *
 
+
+## For debugging only  ### 
+
+#from pysmi import debug
+#debug.setLogger(debug.Debug('all'))
+
+source_mibfiles="file:///home/monitor1/.pysnmp/mibs/source_mibs"
+compiled_mibs="/home/monitor1/.pysnmp/mibs/compiled_mibs"
+### Note: .pysnmp needs to be set to the correct group, eg www-data
+
+
+
+
+
 ### Get an snmp parameter for a link. Try all ips in the server list.
 ### return as soon as parameter has been accessed.
 
@@ -31,6 +45,7 @@ def getparameter (server, parameter, oid):
 
 
 
+
 def SNMPGet(myparam,IPAddress,OID,community):
   # SNMPGet ('vibeTunnelStatus', '78.129.231.65', 1, 'voipex')
   #if testmode == True: print ("SNMPGet %s %s %s %s" % (myparam,IPAddress,OID,community))
@@ -41,7 +56,7 @@ def SNMPGet(myparam,IPAddress,OID,community):
            CommunityData(community,mpModel=1),
            UdpTransportTarget((IPAddress, 161)),
            ContextData(),
-           ObjectType(ObjectIdentity('VOIPEX-VIBE-MIB', myparam, OID).addAsn1MibSource('file:///home/colin/.snmp/voipexmibs')),
+           ObjectType(ObjectIdentity('VOIPEX-VIBE-MIB', myparam, OID).addAsn1MibSource(source_mibfiles, destination=compiled_mibs)),
             lookupNames=True, lookupValues=True)
   )
 
@@ -69,7 +84,7 @@ def SNMPWalk(myparam,IPAddress,community):
            CommunityData(community,mpModel=1),
            UdpTransportTarget((IPAddress, 161)),
            ContextData(),
-           ObjectType(ObjectIdentity('VOIPEX-VIBE-MIB', myparam).addAsn1MibSource('file:///home/colin/.snmp/voipexmibs')),
+           ObjectType(ObjectIdentity('VOIPEX-VIBE-MIB', myparam).addAsn1MibSource(source_mibfiles, destination=compiled_mibs)),
             lexicographicMode=True, 
             maxRows=5000,
             ignoreNonIncreasingOid=True,
