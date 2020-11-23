@@ -185,6 +185,11 @@
                <!-- <hr> -->
                <img src="{% static 'serverapp/aritari-logo.png' %}" alt="Powered By Voipex" height="100px"><br><br>
 
+
+              {% if user.is_authenticated %}
+                 <p> Welcome {{ user.get_username|capfirst }}<p>
+              {% endif %} 
+
 <!--                {% if server != 'None' %}
                  <h3>{{server}}</h3>
                {% endif %}
@@ -199,19 +204,20 @@
                 {% block formreply %}
                 {% endblock formreply %}
 
-           </div>
 
          <!-- <div class="col-md-7"> -->
+
+
+          {% block login_content %}
+          {% endblock login_content %}
+
+
+          {% block logout-content%}
+          {% endblock logout-content%}
+
+           </div>
+
       {% endblock servertable %}
-
-
-      {% block login_content %}
-      {% endblock login_content %}
-
-
-      {% block logout-content%}
-      {% endblock logout-content%}
-
 
 
 
