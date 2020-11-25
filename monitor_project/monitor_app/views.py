@@ -37,7 +37,7 @@ def parameter_form(name, mib, use_threshold = False, postdata = None):
       form.fields[f'{name}_threshold'].disabled = True
     return form
 
-
+@login_required
 def server_form(request, form_data = None ,  report = None):
 
 
@@ -283,6 +283,7 @@ def base(request, server = None, action=None):
     #company_obj = Company.objects.get(name=company_name)
     print (f"action = {action}")
     print (f"server = {server}")
+    print (f"request.path = {request.path}")
 
 
     if action == 'Delete':

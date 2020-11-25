@@ -22,7 +22,9 @@
          {% if  servers %} 
 
             {% for server in servers %}
+          <a id='{{ server.name|cut:" " }}'>
            <form action="{% url 'serverapp:confirm_request_new' server.name %}" method="POST">
+
            {% csrf_token %}
 
             <input type="hidden" name="next" value="{{ request.path }}">
@@ -82,7 +84,7 @@
                <img src="{% static 'serverapp/aritari-logo.png' %}" alt="Powered By Voipex" height="100px"><br><br>
 
          {% endif %}
-
+         </a>
 
 
    </div class="col-md-5 order-md-1">
