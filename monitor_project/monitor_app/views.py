@@ -25,11 +25,11 @@ from .forms import *
 #  ]
 
 form_parameters = [
-    {'name':'Tunnel Status', 'mib': 'vibeTunnelStatus', 'threshold':False},
-    {'name':'Link Quality', 'mib': 'vibeRemoteQuality', 'threshold':True},
-    {'name':'RX Jitter', 'mib': 'vibeRXJitterAverage', 'threshold':True},
-    {'name':'TX Jitter', 'mib': 'vibeTXJitterAverage', 'threshold':True},
-    {'name':'Late Packets', 'mib': 'vibeLate', 'threshold':False},
+    {'name':'TunnelStatus', 'mib': 'vibeTunnelStatus', 'threshold':False},
+    {'name':'LinkQuality', 'mib': 'vibeRemoteQuality', 'threshold':True},
+    {'name':'RXJitter', 'mib': 'vibeRXJitterAverage', 'threshold':True},
+    {'name':'TXJitter', 'mib': 'vibeTXJitterAverage', 'threshold':True},
+    {'name':'LatePackets', 'mib': 'vibeLate', 'threshold':False},
 ]
 
 
@@ -87,7 +87,7 @@ def server_form(request, form_data = None ,  report = None):
         paramform_list = []
         # paramform_list.append(parameter_form('TunnelStatus', 'vibeTunnelStatus', False, request.POST))
         # paramform_list.append(parameter_form('Link Quality', 'vibeRemoteQuality', True, request.POST))
-        param_form_list = [ parameter_form(param['name'], param['mib'], param['threshold'],request.POST)  for param in form_parameters ]
+        paramform_list = [ parameter_form(param['name'], param['mib'], param['threshold'],request.POST)  for param in form_parameters ]
 
         # check whether it's valid:
         if form.is_valid() and check_forms_are_valid(paramform_list):
@@ -163,9 +163,9 @@ def server_form(request, form_data = None ,  report = None):
         # paramform_list.append(parameter_form('RX Jitter', 'vibeRXJitterAverage', True))
         # paramform_list.append(parameter_form('TX Jitter', 'vibeTXJitterAverage', True))
         # paramform_list.append(parameter_form('Late Packets', 'vibeLate', False))
-        param_form_list = [ parameter_form(param['name'], param['mib'], param['threshold'])  for param in form_parameters ]
+        paramform_list = [ parameter_form(param['name'], param['mib'], param['threshold'])  for param in form_parameters ]
 
-
+        print (f"param_form_list : {paramform_list}")
 
     return render(request, 'serverapp/server_form.html', {'form': form, 'form_list' : paramform_list })
 
