@@ -22,7 +22,8 @@
          {% if  servers %} 
 
             {% for server in servers %}
-          <a id='{{ server.name|cut:" " }}'>
+         
+          <a id='{{ server.name|cut:" " }}'> <!-- marker for dropdown to jump to -->
            <form action="{% url 'serverapp:confirm_request_new' server.name %}" method="POST">
 
            {% csrf_token %}
@@ -84,7 +85,7 @@
                <img src="{% static 'serverapp/aritari-logo.png' %}" alt="Powered By Voipex" height="100px"><br><br>
 
          {% endif %}
-         </a>
+         </a> <!-- marker for dropdown to jump to -->
 
 
    </div class="col-md-5 order-md-1">

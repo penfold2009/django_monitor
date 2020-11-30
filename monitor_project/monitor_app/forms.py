@@ -34,7 +34,8 @@ class Parameter_dynamic (forms.Form):
         mib = kwargs.pop('mib')
 
         ## Now initialise the main form class
-        super(Parameter_dynamic,self).__init__(*args, **kwargs)
+        # super(Parameter_dynamic,self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields[f'{param}_threshold'] = forms.IntegerField(label = 'Threshold Value', initial = 50)
         self.fields[f'{param}_enable'] = forms.BooleanField(label='Enable', initial = True, required = False)
         self.fields[f'{param}_email']  = forms.BooleanField(label='Email', initial = True,   required = False)

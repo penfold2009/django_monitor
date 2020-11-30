@@ -16,6 +16,23 @@ from .forms import *
 
 ## https://docs.djangoproject.com/en/3.1/topics/forms/
 
+# form_parameters = [
+#     ['TunnelStatus', 'vibeTunnelStatus', False],
+#     ['Link Quality', 'vibeRemoteQuality', True],
+#     ['RX Jitter', 'vibeRXJitterAverage', True],
+#     ['TX Jitter', 'vibeTXJitterAverage', True],
+#     ['Late Packets', 'vibeLate', False]
+#  ]
+
+form_parameters = [
+    {'name':'Tunnel Status', 'mib': 'vibeTunnelStatus', 'threshold':False},
+    {'name':'Link Quality', 'mib': 'vibeRemoteQuality', 'threshold':True},
+    {'name':'RX Jitter', 'mib': 'vibeRXJitterAverage', 'threshold':True},
+    {'name':'TX Jitter', 'mib': 'vibeTXJitterAverage', 'threshold':True},
+    {'name':'Late Packets', 'mib': 'vibeLate', 'threshold':False},
+]
+
+
 
 def check_forms_are_valid(form_list):
 
@@ -39,6 +56,7 @@ def parameter_form(name, mib, use_threshold = False, postdata = None):
 
 @login_required
 def server_form(request, form_data = None ,  report = None):
+
 
 
     if 'form_response' in request.path:
@@ -67,9 +85,9 @@ def server_form(request, form_data = None ,  report = None):
         # create a form instance and populate it with data from the request:
         form = NameForm(data = request.POST)
         paramform_list = []
-        paramform_list.append(parameter_form('TunnelStatus', 'vibeTunnelStatus', False, request.POST))
-        paramform_list.append(parameter_form('Link Quality', 'vibeRemoteQuality', True, request.POST))
-
+        # paramform_list.append(parameter_form('TunnelStatus', 'vibeTunnelStatus', False, request.POST))
+        # paramform_list.append(parameter_form('Link Quality', 'vibeRemoteQuality', True, request.POST))
+        param_form_list = [ parameter_form(param['name'], param['mib'], param['threshold'],request.POST)  for param in form_parameters ]
 
         # check whether it's valid:
         if form.is_valid() and check_forms_are_valid(paramform_list):
@@ -140,23 +158,32 @@ def server_form(request, form_data = None ,  report = None):
         form = NameForm()
 
         paramform_list = []
-        paramform_list.append(parameter_form('TunnelStatus', 'vibeTunnelStatus'))
-        paramform_list.append(parameter_form('Link Quality', 'vibeRemoteQuality', True))
+        # paramform_list.append(parameter_form('TunnelStatus', 'vibeTunnelStatus', False))
+        # paramform_list.append(parameter_form('Link Quality', 'vibeRemoteQuality', True))
+        # paramform_list.append(parameter_form('RX Jitter', 'vibeRXJitterAverage', True))
+        # paramform_list.append(parameter_form('TX Jitter', 'vibeTXJitterAverage', True))
+        # paramform_list.append(parameter_form('Late Packets', 'vibeLate', False))
+        param_form_list = [ parameter_form(param['name'], param['mib'], param['threshold'])  for param in form_parameters ]
+
 
 
     return render(request, 'serverapp/server_form.html', {'form': form, 'form_list' : paramform_list })
 
+####################################################################################################
 
 
 
-def confirm_request_new (request, name, decision=None, action=None):
+##def confirm_request_new (request, name, decision=None, action=None):
+def confirm_request_new (request, name, action=None):
 
     show_requests(request)
+    print (f"action from parameter : {action}")
 
     if request.method == 'POST':
 
       print (f'name {name}')
       print (f"Action : {request.POST['action']}")
+
       template = 'serverapp/confirm_action.html'
       context = {'name' : name , 'action': request.POST['action'],
                  'next': request.POST['next']}
