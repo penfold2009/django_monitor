@@ -196,6 +196,18 @@ class MIBParameter (models.Model):
 
 
 
+  def update_record(self):
+    print (f"### Updating StateRecord for {self.name} to {self.current_status} for mib {self.name} ")
+
+    db_mibrecord = StateRecord(
+        mib_change = timezone.now(),
+        mib_status = self.current_status,
+        parent_mib = self
+        )
+    
+    db_mibrecord.save()
+
+
   def setupmib (self, subparam):
         aspercentage = (lambda value,threshold: threshold/100 * value)
         self.current_status = self.mib_status = None
@@ -276,6 +288,8 @@ class MIBParameter (models.Model):
               self.transition_statetime = time() - self.statetimestart
               print (" '%s' link '%s' for server '%s' has changed state to '%s' ." % (self.name, self.parent_link.name , self.parent_link.server.name, self.current_status) )
 
+              self.update_record()
+
               if self.transition_statetime >= 180:
                  print (" '%s' link '%s' for server '%s' has changed state to '%s' for longer than 3 mins." % (self.name, self.parent_link.name , self.parent_link.server.name, self.current_status))
                  self.mib_status  = self.current_status
@@ -332,5 +346,27 @@ class Emails (models.Model):
 class StateRecord (models.Model):
 
      parent_mib = models.ForeignKey(MIBParameter, on_delete=models.CASCADE, blank=True, null=True)
-     mib_change = models.DateTimeField('date modified')
+     mib_change = models.DateTimeField(default = timezone.now)
      mib_status = models.CharField(max_length=20, default = None,blank=True, null=True)
+
+     @classmethod
+     def stats(cls, get_name="all"):
+        outlist = []
+        if get_name == "all":
+          stat_filter= cls.objects.all()
+        else:
+          stat_filter = cls.objects.filter(parent_mib__parent_link__name = get_name)
+
+        for stat in stat_filter :
+          server = stat.parent_mib.parent_link.server.name
+          mib_name = stat.parent_mib.name
+          link_name = stat.parent_mib.parent_link.name
+          outlist.append([server, link_name, mib_name, stat.mib_status, stat.mib_change])
+        return outlist
+
+
+     def __repr__(self):
+        return (f"{self.parent_mib.name}:{self.parent_mib.parent_link.name}:{self.parent_mib.parent_link.server.name}:{self.mib_status}")
+
+
+
