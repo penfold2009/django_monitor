@@ -177,7 +177,10 @@ class MIBParameter (models.Model):
   def getthreshold(self, mibparamter):
     
     getline = False
-    mibfile = (environ['HOME'] + '/.pysnmp/mibs/VOIPEX-VIBE-MIB.py')
+    # mibfile = (environ['HOME'] + '/.pysnmp/mibs/VOIPEX-VIBE-MIB.py')
+    mibfile = compiled_mibs + '/VOIPEX-VIBE-MIB.py'
+
+
     with open (mibfile) as myfile: 
         for line in myfile: 
             if (mibparamter +  ' = '  in line) : 
@@ -324,3 +327,10 @@ class Emails (models.Model):
       server = models.ForeignKey(Server, on_delete=models.CASCADE, blank=True, null=True)
       email = models.EmailField(max_length=20)
 
+
+
+class StateRecord (models.Model):
+
+     parent_mib = models.ForeignKey(MIBParameter, on_delete=models.CASCADE, blank=True, null=True)
+     mib_change = models.DateTimeField('date modified')
+     mib_status = models.CharField(max_length=20, default = None,blank=True, null=True)

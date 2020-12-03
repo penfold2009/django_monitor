@@ -16,13 +16,6 @@ from .forms import *
 
 ## https://docs.djangoproject.com/en/3.1/topics/forms/
 
-# form_parameters = [
-#     ['TunnelStatus', 'vibeTunnelStatus', False],
-#     ['Link Quality', 'vibeRemoteQuality', True],
-#     ['RX Jitter', 'vibeRXJitterAverage', True],
-#     ['TX Jitter', 'vibeTXJitterAverage', True],
-#     ['Late Packets', 'vibeLate', False]
-#  ]
 
 form_parameters = [
     {'name':'TunnelStatus', 'mib': 'vibeTunnelStatus', 'threshold':False},
@@ -30,6 +23,10 @@ form_parameters = [
     {'name':'RXJitter', 'mib': 'vibeRXJitterAverage', 'threshold':True},
     {'name':'TXJitter', 'mib': 'vibeTXJitterAverage', 'threshold':True},
     {'name':'LatePackets', 'mib': 'vibeLate', 'threshold':False},
+    {'name':'TunnelType', 'mib': 'vibeTunnelType', 'threshold':False},
+    {'name':'Multilink', 'mib': 'vibeMultilink', 'threshold':False},
+
+
 ]
 
 
@@ -57,8 +54,6 @@ def parameter_form(name, mib, use_threshold = False, postdata = None):
 @login_required
 def server_form(request, form_data = None ,  report = None):
 
-
-
     if 'form_response' in request.path:
 
       print (f"request.path is {request.path}")
@@ -84,9 +79,6 @@ def server_form(request, form_data = None ,  report = None):
 
         # create a form instance and populate it with data from the request:
         form = NameForm(data = request.POST)
-        paramform_list = []
-        # paramform_list.append(parameter_form('TunnelStatus', 'vibeTunnelStatus', False, request.POST))
-        # paramform_list.append(parameter_form('Link Quality', 'vibeRemoteQuality', True, request.POST))
         paramform_list = [ parameter_form(param['name'], param['mib'], param['threshold'],request.POST)  for param in form_parameters ]
 
         # check whether it's valid:
@@ -139,35 +131,34 @@ def server_form(request, form_data = None ,  report = None):
 
 
 
-            ### When redirecting to another view instead of an html template can use the 'reverse' function ##
+            ### HttpResponseRedirect is used when redirecting directly to a new url, instead of rendering webpage
+            ### 
             ### https://docs.djangoproject.com/en/3.1/intro/tutorial04/#write-a-minimal-form
             ### the url created will be something like :-
             ### http://127.0.0.1:8000/form_response/Aritari/Set%20up%20links%20for%20Office%20Rapid%20server2
             ### In urls.py this matches the url sting "path('form_response/<str:form_data>/<str:report>', views.server_form, name='server_form'),"
             ### and so will load the view server_form.
-            ### notice there is another url for getname " path('form_test/', views.server_form, name='server_form'), "
+            ### notice there is another url for getname " path('form_newserver/', views.server_form, name='server_form'), "
             ### but the string format does not match so it will not be used.
+            ### So reverse('serverapp:server_form', args=('teststring','anotherstring') )  will come back with :-
+            ###   /form_response/teststring/anotherstring
+            ### and reverse('serverapp:server_form') will return 
+            ###   /form_newserver/
             return HttpResponseRedirect(reverse('serverapp:server_form', args=(form.cleaned_data['company'], report)  ) )
-
-    # if a GET (or any other method) we'll create a blank form
+           
+    # if request method is not POST but a GET (or any other method) we'll create a blank form
     else:
-
-
 
         print ("blank form")
         form = NameForm()
-
-        paramform_list = []
-        # paramform_list.append(parameter_form('TunnelStatus', 'vibeTunnelStatus', False))
-        # paramform_list.append(parameter_form('Link Quality', 'vibeRemoteQuality', True))
-        # paramform_list.append(parameter_form('RX Jitter', 'vibeRXJitterAverage', True))
-        # paramform_list.append(parameter_form('TX Jitter', 'vibeTXJitterAverage', True))
-        # paramform_list.append(parameter_form('Late Packets', 'vibeLate', False))
         paramform_list = [ parameter_form(param['name'], param['mib'], param['threshold'])  for param in form_parameters ]
-
-        print (f"param_form_list : {paramform_list}")
+        
+        rev_url = reverse('serverapp:server_form', args=('teststring','anotherstring') )
+        print (f"rev_url = {rev_url}")
 
     return render(request, 'serverapp/server_form.html', {'form': form, 'form_list' : paramform_list })
+
+
 
 ####################################################################################################
 
@@ -477,8 +468,8 @@ def linkparameters (request, company_name, server_name, link_name):
       server_obj = get_object_or_404(Server, name=server_name)
       company_obj = get_object_or_404(Company, name=company_name)
 
-      response = HttpResponse()
-      response.write("You clicked on %s. : %d " % (link_obj, link_obj.oid))
+      # response = HttpResponse()
+      # response.write("You clicked on %s. : %d " % (link_obj, link_obj.oid))
       template = "serverapp/parameter_table.html"
       context = {'links': server_obj.serverlink_set.all(), 
                'company_name': company_name,

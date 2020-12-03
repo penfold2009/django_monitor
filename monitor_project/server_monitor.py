@@ -1,8 +1,7 @@
-#!/mnt/D64242DF4242C3C9/work/GIT_Repos/django_monitor/venv_dj_monitor/bin/python
+#!/usr/bin/env python
 
-
-import os
-os.environ.setdefault("DJANGO_SETTINGS_MODULE","monitor_project.settings")
+from os import system, _exit, remove, environ
+environ.setdefault("DJANGO_SETTINGS_MODULE","monitor_project.settings")
 import django
 django.setup()
 from monitor_app.models import *
@@ -10,7 +9,6 @@ import datetime
 
 #import ezgmail  ### ensure token.json  token.pickle exist in the running dir
 from time import *
-from os import system, _exit, remove, environ
 from pathlib import Path
 import sys
 import json
@@ -18,8 +16,7 @@ from datetime import timedelta
 import re
 from monitor_packages.snmp_functions import *
 from monitor_packages.functions import *
-from django.contrib.auth.models import User                                                                      
-
+from django.contrib.auth.models import User
 
 # managed1 = Server.objects.get(name="Managed_server1")
 
@@ -75,5 +72,17 @@ if __name__ == '__main__':
 
 
 
-	intialise_server_list(server_list)
+	## intialise_server_list(server_list)
 	
+  while True:
+
+      try:
+        test_companies()
+
+      except KeyboardInterrupt:
+          logprint('Interrupted')
+          try:
+              sys.exit(0)
+          except SystemExit:
+              _exit(0)
+      sleep (60)
